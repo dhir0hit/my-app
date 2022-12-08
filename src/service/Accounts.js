@@ -6,6 +6,17 @@ export default class Accounts {
     constructor() {
         // All Accounts List
         this.List = []
+        this.empty_filters();
+
+        // Loading Data
+        this.load_data();
+        // Calculating Strength
+        this.CalculateStrength();
+        // Filtering Data
+        this.FilterData();
+    }
+
+    empty_filters() {
         // Favorite Accounts List
         this.favoriteList = []
         // Recently Created Accounts
@@ -16,9 +27,7 @@ export default class Accounts {
         this.missingCredentialsList = []
 
         // Json format
-        this.platformList = {
-            "google": [],
-        }
+        this.platformList = {}
 
         this.OverallPasswordStrength = 0
         this.StrongPasswords = 0
@@ -27,14 +36,6 @@ export default class Accounts {
 
         // Last account id
         this.LastAccountId = 0
-
-
-        // Loading Data
-        this.load_data();
-        // Calculating Strength
-        this.CalculateStrength();
-        // Filtering Data
-        this.FilterData();
     }
 
     /**
@@ -55,10 +56,8 @@ export default class Accounts {
         account.Id = ++this.LastAccountId;
         this.List.push(account)
 
-        console.log(this.List)
-
         // TODO: Add account to database
-
+        this.empty_filters();
         // Calculate Strength
         this.CalculateStrength();
         // Filtering Data
@@ -76,6 +75,11 @@ export default class Accounts {
                 : account;
         })
         // TODO: Update Account from database
+        this.empty_filters();
+        // Calculate Strength
+        this.CalculateStrength();
+        // Filtering Data
+        this.FilterData();
     }
 
     /**
@@ -87,6 +91,11 @@ export default class Accounts {
             return account.Id !== id;
         });
         // TODO: Delete account from database
+        this.empty_filters();
+        // Calculate Strength
+        this.CalculateStrength();
+        // Filtering Data
+        this.FilterData();
     }
 
 
@@ -124,6 +133,7 @@ export default class Accounts {
      * Filtering Data got from database
      * */
     FilterData() {
+        console.log("[+] filter data update")
         for (const account of this.List) {
             /*
             * Last account id
@@ -164,7 +174,9 @@ export default class Accounts {
             }
             // adding item to list with platform filtered
             this.platformList[account.Platform].push(account)
-        }
-    }
+            // console.log(account)
 
+        }
+        // TODO: not working
+    }
 }

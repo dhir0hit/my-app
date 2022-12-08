@@ -1,0 +1,18 @@
+{
+  "theme": {
+    "light": {
+      "text-color": "#000000",
+      "background-color": "#ffffff",
+      "primary-color": "#3A86FF",
+      "secondary-color": "#003566",
+      "highlight-color": "#ffd60a"
+    },
+    "dark": {
+      "text-color": "#ffffff",
+      "background-color": "#000814",
+      "primary-color": "#003566",
+      "secondary-color": "#001d3d",
+      "highlight-color": "#ffc300"
+    }
+  }
+}

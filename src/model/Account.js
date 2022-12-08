@@ -91,7 +91,6 @@ export default class Account {
         return Array.of(this._id_,
             this._username_,
             this._password_,
-            this._password_,
             this._platform_,
             this._website_,
             this._additionalInfo_,
@@ -155,7 +154,7 @@ export default class Account {
      * @returns decrypted _platform_ as string
      * */
     get Platform() {
-        return this._platform_;
+        return CryptoJS.enc.Base64.parse(this._platform_).toString(CryptoJS.enc.Utf8);
     }
 
     /**
@@ -175,7 +174,7 @@ export default class Account {
      * @returns decrypted website as string
      * */
     get Website() {
-        return this._website_;
+        return CryptoJS.enc.Base64.parse(this._website_).toString(CryptoJS.enc.Utf8);
     }
 
     /**
@@ -195,7 +194,7 @@ export default class Account {
      * @returns decrypted additionalInfo as string
      * */
     get AdditionalInfo() {
-        return this._additionalInfo_;
+        return CryptoJS.enc.Base64.parse(this._additionalInfo_).toString(CryptoJS.enc.Utf8);
     }
 
     /**

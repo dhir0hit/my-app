@@ -1,22 +1,37 @@
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
-import {ThemedView, ThemedText, ThemedButton} from "./components/ThemedComponents";
+import {ThemedText, ThemedView, ThemedButton} from "./src/components/ThemedComponents";
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
-import Profile from "./pages/Profile";
-import Home from "./pages/Home";
-import PasswordManagerLanding from "./pages/PasswordManager/PasswordManagerLanding.jsx";
-import PasswordManagerHome from "./pages/PasswordManager/PasswordManagerHome";
-import PasswordManagerList from "./pages/PasswordManager/PasswordManagerList";
-import PasswordManagerDetail from "./pages/PasswordManager/PasswordManagerDetail.jsx";
-import PasswordManagerAddAccount from "./pages/PasswordManager/PasswordManagerAddAccount";
-import PasswordManagerGeneratePassword from "./pages/PasswordManager/PasswordManagerGeneratePassword.jsx";
+
+
+import Profile from "./src/pages/Profile";
+import Home from "./src/pages/Home";
+import Settings from "./src/pages/Settings";
+
+/*
+* Password Manager Imports
+* */
+import PasswordManagerLanding from "./src/pages/PasswordManager/PasswordManagerLanding.jsx";
+import PasswordManagerHome from "./src/pages/PasswordManager/PasswordManagerHome";
+import PasswordManagerList from "./src/pages/PasswordManager/PasswordManagerList";
+import PasswordManagerDetail from "./src/pages/PasswordManager/PasswordManagerDetail.jsx";
+import PasswordManagerAddAccount from "./src/pages/PasswordManager/PasswordManagerAddAccount";
+import PasswordManagerGeneratePassword from "./src/pages/PasswordManager/PasswordManagerGeneratePassword.jsx";
+
+
+import React, {Component} from "react";
 
 export default class App extends Component {
   constructor(props) {
     super(props);
+
+    // this.PasswordManager = React.lazy(()=> {
+    //   return import("./src/pages/PasswordManager/PasswordManagerLanding.jsx")
+    // })
   }
   render() {
+    const Stack = createNativeStackNavigator();
     return (
         <NavigationContainer>
           <Stack.Navigator
@@ -61,6 +76,11 @@ export default class App extends Component {
                 name={"Password-Manager-Generate-Password"}
                 component={PasswordManagerGeneratePassword}
                 options={{title: 'Password Manager'}}
+            />
+            <Stack.Screen
+                name={"Settings"}
+                component={Settings}
+                options={{title: 'Settings'}}
             />
 
           </Stack.Navigator>

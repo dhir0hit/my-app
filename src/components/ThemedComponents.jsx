@@ -133,6 +133,7 @@ export function ThemedButton(props) {
     const [backgroundColor, setBackgroundColor] = useState("#fff")
     const [textColor, setTextColor] = useState("#000")
 
+    const [Opacity, setOpacity] = useState(1)
 
     /*
     * Function to change current theme according to system theme
@@ -140,6 +141,7 @@ export function ThemedButton(props) {
     * */
     const changeTheme = () => {
         let scheme = Appearance.getColorScheme();
+
 
 
         if (scheme === "dark") {
@@ -174,7 +176,11 @@ export function ThemedButton(props) {
     * with background color of theme
     * */
     return (
-        <Pressable style={{ ...props.style, backgroundColor: backgroundColor}} onPress={props.onPress}>
+        <Pressable
+            style={{ ...props.style, backgroundColor: backgroundColor, opacity: Opacity}}
+            onPress={props.onPress}
+            onPressIn={() => {setOpacity(0.5)}}
+            onPressOut={() => {setOpacity(1)}}>
             {props.children}
         </Pressable>
     )
@@ -219,6 +225,7 @@ export function ThemedAntDesign(props) {// getting current color scheme
             if (props.name !== undefined) {
                 setName(props.name);
             }
+
         }
         catch (e) {
         }
@@ -257,8 +264,9 @@ export function ThemedTextInput(props) {
     // using state to declare textColor and color scheme
     const [colorScheme, setColorScheme] = useState(scheme);
     const [Color, setColor] = useState("#fff");
-    const [Size, setSize] = useState(25);
-    const [Name, setName] = useState("left");
+    const [autoComplete, setAutoComplete] = useState("off");
+    const [keyboardType, setKeyboardType] = useState("default");
+    const [secureTextEntry, setSecureTextEntry] = useState(false);
 
     /*
     * Function to change current theme according to system theme
@@ -286,20 +294,27 @@ export function ThemedTextInput(props) {
         }
 
         try {
-            if (props.name !== undefined) {
-                setName(props.name);
+            if (props.autoComplete !== undefined) {
+                setAutoComplete(props.autoComplete);
+            }
+        }
+        catch (e) {
+        }
+        try {
+            if (props.keyboardType !== undefined) {
+                setKeyboardType(props.keyboardType);
+            }
+        }
+        catch (e) {
+        }
+        try {
+            if (props.secureTextEntry !== undefined) {
+                setSecureTextEntry(props.secureTextEntry);
             }
         }
         catch (e) {
         }
 
-        try {
-            if (props.size !== undefined) {
-                setSize(props.size);
-            }
-        }
-        catch (e) {
-        }
 
         try {
             if (props.style.borderColor !== undefined) {
@@ -330,6 +345,9 @@ export function ThemedTextInput(props) {
             onChangeText={(text) => props.onChangeText(text)}
             onTextInput={props.onTextInput}
             value={props.value}
+            autoComplete={autoComplete}
+            keyboardType={keyboardType}
+            secureTextEntry={secureTextEntry}
             placeholder={props.placeholder} />
     )
 }

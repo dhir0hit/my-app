@@ -1,34 +1,50 @@
 import {ThemedButton, ThemedText, ThemedView} from "../components/ThemedComponents";
 import {StatusBar} from "expo-status-bar";
 import {StyleSheet} from "react-native";
-import {AccountDao} from "../dao/AccountDao";
+import {Component} from "react";
 
-function Home(props) {
+class Home extends Component {
+    constructor(props) {
+        super(props);
+    }
+    render() {
+        return (
+            <ThemedView style={styles.container}>
+                <ThemedText>Open up App.js to start working on your app!</ThemedText>
+                <ThemedText>{this.props.route.name}</ThemedText>
+                <StatusBar style="auto"/>
+                <ThemedButton
+                    style={{padding: 6}}
+                    onPress={() => {
+                        this.props.navigation.navigate('Profile', {name: 'Rohit'})
+                    }}
+                >
+                    <ThemedText theme={'highlight'}>
+                        Profile
+                    </ThemedText>
+                </ThemedButton>
+                <ThemedButton
+                    style={{...styles.titleStyle, padding: 6, margin: 5}}
+                    onPress={() => {
+                        this.props.navigation.navigate('Password-Manager')
+                    }}
+                >
+                    <ThemedText theme={'highlight'}>
+                        Password Manager
+                    </ThemedText>
+                </ThemedButton>
 
-    let account= new AccountDao();
-    return (
-        <ThemedView style={styles.container}>
-            <ThemedText>Open up App.js to start working on your app!</ThemedText>
-            <ThemedText>{props.route.name}</ThemedText>
-            <StatusBar style="auto" />
-            <ThemedButton
-                style={{padding: 6}}
-                onPress={() => {props.navigation.navigate('Profile', {name: 'Rohit'})}}
-            >
-                <ThemedText theme={'highlight'}>
-                    Profile
-                </ThemedText>
-            </ThemedButton>
-            <ThemedButton
-                style={{...styles.titleStyle, padding: 6, margin: 5}}
-                onPress={() => {props.navigation.navigate('Password-Manager')}}
-            >
-                <ThemedText theme={'highlight'}>
-                    Password Manager
-                </ThemedText>
-            </ThemedButton>
-        </ThemedView>
-    )
+                <ThemedButton
+                    style={{...styles.titleStyle, padding:6, margin:5}}
+                    onPress={() => {this.props.navigation.navigate('Settings')}}
+                >
+                    <ThemedText theme={'highlight'}>
+                        Settings
+                    </ThemedText>
+                </ThemedButton>
+            </ThemedView>
+        )
+    }
 }
 
 export default Home;
