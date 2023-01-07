@@ -134,18 +134,19 @@ export default class PasswordManagerAddAccount extends Component{
                 AdditionalInfo,
                 Favorite);
             this.props.route.params.accountService.CreateAccount(account)
+                .then(() => {
+                    this.setUsernameError("");
+                    this.setPasswordError("");
+                    this.setPlatformError("");
 
-            this.setUsernameError("");
-            this.setPasswordError("");
-            this.setPlatformError("");
-
-            this.props.navigation.goBack()
-            /*
-            *
-            * Updating Home after making account
-            *
-            * */
-            this.props.route.params.Update()
+                    this.props.navigation.goBack()
+                    /*
+                    *
+                    * Updating Home after making account
+                    *
+                    * */
+                    this.props.route.params.Update();
+                })
         }
         if (Username === "") {
             this.setUsernameError("Please Enter ");

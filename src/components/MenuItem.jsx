@@ -1,12 +1,14 @@
 import {Image, StyleSheet, View} from "react-native";
 import {ThemedAntDesign, ThemedButton, ThemedText} from "../../../my-app/src/components/ThemedComponents";
 import {Component, useEffect} from "react";
+import Accounts from "../service/Accounts";
 
 
 // TODO: NOT UPDATING
 class MenuItem extends Component {
     constructor(props) {
         super(props);
+
 
         this.IconName = "";
         this.accountsList = []
@@ -29,15 +31,14 @@ class MenuItem extends Component {
             this.IconName = "idcard";
             this.accountsList = this.props.accountService.platformList;
         }
-        console.log("'''''''''''''''''''''")
-        console.log(this.accountsList)
-        console.log("'''''''''''''''''''''")
     }
 
     render() {
         return (
             <ThemedButton onPress={() => {this.props.navigation.navigate('Password-Manager-List',
-                {accountService: this.props.accountService,
+                {
+                    update: this.props.Update,
+                    accountService: this.props.accountService,
                     accounts: this.accountsList,
                     filter: this.props.filter
                 }

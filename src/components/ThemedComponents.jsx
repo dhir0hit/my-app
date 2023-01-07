@@ -223,7 +223,54 @@ export function ThemedAntDesign(props) {// getting current color scheme
 
         try {
             if (props.name !== undefined) {
-                setName(props.name);
+
+                const IconsName = ["google", "googleplus", "instagram", "creditcard", "mail", "laptop",
+                    "home", "shoppingcart", "user", "phone", "lock", "cloud", "windows", "ie", "chrome",
+                    "github", "safety", "bank", "apple1", "android1", "codepen", "amazon",
+                    "dropbox", "gitlab", "skype", "youtube", "wechat", "twitter", "html",
+                    "codesandbox", "dribbble", "wifi", 'star', 'copy1', 'eyeo', 'eye', 'setting',
+                    'sync', 'plus', 'bars', 'clockcircleo', 'exclamationcircle', 'warning', 'left',
+                    'scan1', 'staro', 'close', 'edit', 'delete'
+                ];
+
+                let accountIcon = ""
+
+                if (IconsName.includes(props.name.toLowerCase())) {
+                    accountIcon = props.name.toLowerCase();
+                }
+                else if (props.name.toLowerCase().replace(' ', '') === "google plus") {
+                    accountIcon = "googleplus"
+                } else if (props.name.toLowerCase().replace(' ', '') === "drop box") {
+                    accountIcon = "dropbox"
+                } else if (props.name.toLowerCase().replace(' ', '') === "linkedin") {
+                    accountIcon = "linkedin-square"
+                } else if (props.name.toLowerCase().replace(' ', '') === "facebook") {
+                    accountIcon = "facebook-square"
+                } else if (props.name.toLowerCase().replace(' ', '') === "app store") {
+                    accountIcon = "appstore1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "message") {
+                    accountIcon = "message1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "message") {
+                    accountIcon = "message1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "android" || props.name.toLowerCase().replace(' ', '') === "samsung") {
+                    accountIcon = "android1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "apple" || props.name.toLowerCase().replace(' ', '') === "iphone") {
+                    accountIcon = "apple1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "mobile" || props.name.toLowerCase().replace(' ', '') === "tablet" || props.name.toLowerCase().replace(' ', '') === "ipad" || props.name.toLowerCase().replace(' ', '') === "i pad") {
+                    accountIcon = "tablet1"
+                } else if (props.name.toLowerCase().replace(' ', '') === "window") {
+                    accountIcon = "windows"
+                } else if (props.name.toLowerCase().replace(' ', '') === "internet explorer") {
+                    accountIcon = "ie"
+                } else if (props.name.toLowerCase().replace(' ', '') === "shopping" || props.name.toLowerCase().replace(' ', '') === "cart" || props.name.toLowerCase().replace(' ', '') === "shopping cart") {
+                    accountIcon = "shoppingcart"
+                } else if (props.name.toLowerCase().replace(' ', '') === "email" || props.name.toLowerCase().replace(' ', '') === "gmail" || props.name.toLowerCase().replace(' ', '') === "mail") {
+                    accountIcon = "mail"
+                } else {
+                    accountIcon = "idcard"
+                }
+                setName(accountIcon);
+
             }
 
         }

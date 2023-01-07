@@ -3,49 +3,41 @@ import {ThemedAntDesign, ThemedText, ThemedView} from "../../components/ThemedCo
 import {Pressable, ScrollView, StyleSheet, View} from "react-native";
 import {AccountElement} from "../../components/AccountElement";
 import {StatusBar} from "expo-status-bar";
+import Accounts from "../../service/Accounts";
 
-export default class PasswordManagerList extends Component{
-    constructor(props) {
-        super(props);
-        console.log("************************************")
-        console.log(this.props.route.params.accounts)
-        console.log("************************************")
-    }
+export default function PasswordManagerList(props) {
 
-    render() {
-        const routeName = this.props.route.name.split('-');
-        return (
-            <ThemedView style={styles.container}>
-                <View style={{display: "flex",
-                    flexDirection:"row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    paddingHorizontal: 5}}>
-                    <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
-                        <Pressable
-                            onPress={() => {this.props.navigation.goBack()}}
-                            style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
-                        >
-                            <ThemedAntDesign name={"left"} size={24} color={"white"} />
-                        </Pressable>
-                    </View>
-                    <ThemedText>{this.props.route.params.filter}</ThemedText>
+    const routeName = props.route.name.split('-');
+    return (
+        <ThemedView style={styles.container}>
+            <View style={{display: "flex",
+                flexDirection:"row",
+                alignItems: "center",
+                justifyContent: "space-between",
+                paddingHorizontal: 5}}>
+                <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
+                    <Pressable
+                        onPress={() => {props.navigation.goBack()}}
+                        style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
+                    >
+                        <ThemedAntDesign name={"left"} size={24} color={"white"} />
+                    </Pressable>
                 </View>
-                <View style={{flex: 1}}>
-                    <ScrollView >
-                        <AccountList
-                            filter={this.props.route.params.filter}
-                            accounts={this.props.route.params.accounts}
-                            accountService={this.props.route.params.accountService}
-                            route={this.props.route}
-                            navigation={this.props.navigation}/>
-                    </ScrollView>
-                </View>
-                <StatusBar style={"auto"} />
-            </ThemedView>
-        )
-    }
-
+                <ThemedText>{props.route.params.filter}</ThemedText>
+            </View>
+            <View style={{flex: 1}}>
+                <ScrollView >
+                    <AccountList
+                        filter={props.route.params.filter}
+                        accounts={props.route.params.accounts}
+                        accountService={props.route.params.accountService}
+                        route={props.route}
+                        navigation={props.navigation}/>
+                </ScrollView>
+            </View>
+            <StatusBar style={"auto"} />
+        </ThemedView>
+    )
 }
 
 function AccountList(props) {
@@ -113,7 +105,8 @@ function AccountList(props) {
                             {
                                 id: accounts[i].Id,
                                 account: accounts[i],
-                                accountService: props.route.params.accountService
+                                accountService: props.route.params.accountService,
+                                update: props.route.params.update
                             })
                     }}
                     Platform={accounts[i].Platform}

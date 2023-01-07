@@ -36,8 +36,17 @@ export default class PasswordManagerLanding extends Component {
 
     openApp() {
         console.log("correct")
-        let accountService = new Accounts()
-        this.props.navigation.navigate('Password-Manager-Home', {accountService: accountService, name: "Rohit"})
+        let accountService = new Accounts();
+        accountService.load_data()
+            .then(() =>
+                this.props.navigation.navigate(
+                    'Password-Manager-Home',
+                    {
+                        accountService: accountService,
+                        name: "Rohit"
+                    })
+            )
+
 
     }
 

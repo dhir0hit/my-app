@@ -55,15 +55,15 @@ export default class Account {
      * ["account_id", "username", "password", "platform", "website", "additional_info", "favorite", "created_on", "edited_on"]
      * */
     SetEncryptedData(account) {
-        this._id_ = account["account_id"];
+        this._id_ = account["id"];
         this._username_ = account["username"];
         this._password_ = account["password"];
         this._platform_ = account["platform"];
         this._website_ = account["website"];
-        this._additionalInfo_ = account["additional_info"];
+        this._additionalInfo_ = account["additionalInfo"];
         this._favorite_ = account["favorite"];
-        this._createdOn_ = account["created_on"];
-        this._editedOn_ = account["edited_on"];
+        this._createdOn_ = account["createdOn"];
+        this._editedOn_ = account["editedOn"];
     }
 
     /**

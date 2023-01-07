@@ -10,9 +10,15 @@ import {ProgressBar} from "react-native-paper";
 import {AccountDetailInfoComponent} from "../../components/AccountDetailInfoComponent";
 import {Component, useEffect, useState} from "react";
 import PasswordStrength from "../../utils/PasswordStrength";
+
+
+/*
+* TODO: have to go to home page to reload things
+* */
 export default class PasswordManagerDetail extends Component {
     constructor(props) {
         super(props);
+
 
         this.state = {
             isEditMode: false,
@@ -51,17 +57,6 @@ export default class PasswordManagerDetail extends Component {
 
     }
 
-    // componentDidMount() {
-    //     // call all the state methods
-    //     this.setUsername({username: this.props.route.params.account.Username})
-    //     this.setUserPassword({userPassword: this.props.route.params.account.Password})
-    //     this.setUserPlatform({userPlatform: this.props.route.params.account.Platform})
-    //     this.setUserWebsite({userWebsite: this.props.route.params.account.Website})
-    //     this.setAdditionalInfo({additionalInfo: this.props.route.params.account.AdditionalInfo})
-    //     this.setFavorite({isFavorite: this.props.route.params.account.Favorite})
-    //
-    // }
-
     setEditMode(value) {
         this.setState({isEditMode: value})
     }
@@ -81,8 +76,8 @@ export default class PasswordManagerDetail extends Component {
     setAdditionalInfo(value) {
         this.setState({additionalInfo: value})
     }
-    setFavorite(value) {
-        this.setState({isFavorite: value})
+    async setFavorite(value) {
+        await this.setState({isFavorite: value})
         console.log(value)
     }
 
@@ -90,8 +85,8 @@ export default class PasswordManagerDetail extends Component {
 
     DeleteAccount() {
         Alert.alert(
-            "Alert Title",
-            "Alert Message",
+            "Alert",
+            "Are you sure, you want to delete.",
             [
                 {
                     text: "Cancel",
@@ -99,13 +94,16 @@ export default class PasswordManagerDetail extends Component {
                     style: 'cancel'
                 },
                 {
-                    text: "OK",
+                    text: "OK, Delete",
                     onPress: () => {
                         // TODO: delete account
-                        this.props.navigation.goBack();
-                        let accDao = new AccountDao();
-                        accDao.deleteOne(account.UserName);
-                        console.log(account.UserName)
+                        this.props.route.params.accountService.DeleteAccount(this.props.route.params.account.Id)
+                            .then(() => {
+                                this.props.route.params.update();
+                                // go back to home-page
+                                this.props.navigation.goBack();
+                                this.props.navigation.goBack();
+                            })
                     },
                     style: 'destructive'
                 }
@@ -130,7 +128,8 @@ export default class PasswordManagerDetail extends Component {
             userPassword !== account.Password ||
             userPlatform !== account.Platform ||
             userWebsite !== account.Website ||
-            additionalInfo !== account.AdditionalInfo
+            additionalInfo !== account.AdditionalInfo ||
+            isFavorite !== account.Favorite
         ) {
             console.log("[+] Account Changed");
 
@@ -142,6 +141,7 @@ export default class PasswordManagerDetail extends Component {
             account.Favorite = isFavorite;
 
             // TODO: update project
+            console.log(account);
 
             this.props.route.params.accountService.UpdateAccount(account);
         }
@@ -174,6 +174,9 @@ export default class PasswordManagerDetail extends Component {
                         </ThemedButton>
                         <ThemedButton onPress={() => {
                             this.setFavorite(!isFavorite)
+                                .then(() => {
+                                    this.Submit()
+                                });
                         }} style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10, marginRight: 7}}>
                             <ThemedAntDesign color={isFavorite ? "#ffb400" : "#ffffff"} name={"star"}/>
                         </ThemedButton>
@@ -189,7 +192,7 @@ export default class PasswordManagerDetail extends Component {
                         borderBottomWidth: 1,
                         borderBottomColor: '#fff'
                     }}>
-                        <ThemedAntDesign style={{marginLeft: 5}} name={"google"} size={100}/>
+                        <ThemedAntDesign style={{marginLeft: 5}} name={userPlatform} size={100}/>
                         <View style={{marginLeft: 15}}>
                             {
                                 isEditMode ?
@@ -209,7 +212,7 @@ export default class PasswordManagerDetail extends Component {
                             isEditMode ?
                                 <>
                                     <ThemedText>Username</ThemedText>
-                                    <ThemedTextInput value={username} onChangeText={text => setUsername(text)}/>
+                                    <ThemedTextInput value={username} onChangeText={text => this.setUsername(text)}/>
                                 </>
                                 :
                                 <AccountDetailInfoComponent head={"Username"} info={username}/>
@@ -218,7 +221,7 @@ export default class PasswordManagerDetail extends Component {
                             isEditMode ?
                                 <>
                                     <ThemedText>Password</ThemedText>
-                                    <ThemedTextInput value={userPassword} onChangeText={text => setUserPassword(text)}/>
+                                    <ThemedTextInput value={userPassword} onChangeText={text => this.setUserPassword(text)}/>
                                 </>
                                 :
                                 <AccountDetailInfoComponent head={"Password"} info={userPassword}/>
@@ -227,7 +230,7 @@ export default class PasswordManagerDetail extends Component {
                             isEditMode ?
                                 <>
                                     <ThemedText>Website</ThemedText>
-                                    <ThemedTextInput value={userWebsite} onChangeText={text => setUserWebsite(text)}/>
+                                    <ThemedTextInput value={userWebsite} onChangeText={text => this.setUserWebsite(text)}/>
                                 </>
                                 :
                                 <AccountDetailInfoComponent head={"Website"} info={userWebsite}/>
@@ -237,7 +240,7 @@ export default class PasswordManagerDetail extends Component {
                         <ThemedText>Additional Info</ThemedText>
                         {
                             isEditMode ?
-                                <ThemedTextInput value={additionalInfo} onChangeText={text => setAdditionalInfo(text)}/>
+                                <ThemedTextInput value={additionalInfo} onChangeText={text => this.setAdditionalInfo(text)}/>
                                 :
                                 <ThemedText>{additionalInfo}</ThemedText>
                         }

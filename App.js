@@ -1,10 +1,17 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import {ThemedText, ThemedView, ThemedButton} from "./src/components/ThemedComponents";
+/*
+* Importing inbuilt components
+* */
+import React, {Component} from "react";
+import { StyleSheet, LogBox } from 'react-native';
 import {NavigationContainer} from "@react-navigation/native";
 import {createNativeStackNavigator} from "@react-navigation/native-stack";
+/**
+ * Importing pages
+ * */
 
-
+/*
+* Importing commons
+* */
 import Profile from "./src/pages/Profile";
 import Home from "./src/pages/Home";
 import Settings from "./src/pages/Settings";
@@ -19,8 +26,10 @@ import PasswordManagerDetail from "./src/pages/PasswordManager/PasswordManagerDe
 import PasswordManagerAddAccount from "./src/pages/PasswordManager/PasswordManagerAddAccount";
 import PasswordManagerGeneratePassword from "./src/pages/PasswordManager/PasswordManagerGeneratePassword.jsx";
 
-
-import React, {Component} from "react";
+/*
+* Disabling Warn messages
+* */
+LogBox.ignoreLogs(['Non-serializable values were found in the navigation state. Check:'])
 
 export default class App extends Component {
   constructor(props) {
