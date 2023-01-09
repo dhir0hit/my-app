@@ -1,3 +1,5 @@
+import {expectNoConsoleError} from "react-native/Libraries/Utilities/ReactNativeTestTools";
+
 const CryptoJS = require('crypto-js');
 
 export default class Account {
@@ -44,8 +46,13 @@ export default class Account {
         this._editedOn_ = editedOn;
 
         // setting creation and Edited date
-        this._NewCreatedOn_();
-        this._NewEditedOn_();
+        if (!this._createdOn_) {
+            console.log("not empty", this._createdOn_)
+            this._NewCreatedOn_();
+        }
+        if (!this._editedOn_){
+            this._NewEditedOn_();
+        }
     }
 
     /**

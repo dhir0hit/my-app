@@ -2,14 +2,19 @@ import Account from "../model/Account";
 import PasswordStrength from "../utils/PasswordStrength";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Config from "./config";
+
 // TODO: CREATE DATABASE WHEN NEW ACCOUNT CREATED
 export default class Accounts {
   constructor() {
     // All Accounts List
     this.List = []
+
+    // remote data connection
+    this.RemoteConnection = false;
+
     this.empty_filters();
 
-    // // Loading Data
+    // Loading Data
     // this.load_data();
     // Calculating Strength
     this.CalculateStrength();
@@ -21,9 +26,14 @@ export default class Accounts {
    * Checking Remote Connection
    * */
   async _checkRemoteConnection() {
-    let response = await fetch(Config.CheckConnection);
-    let result = await response.json()
-    return result;
+    try {
+      let response = await fetch(Config.CheckConnection);
+      let result = await response.json();
+      this.RemoteConnection = true;
+      return result;
+    } catch (e) {
+      return 0;
+    }
   }
 
   empty_filters() {
@@ -62,9 +72,59 @@ export default class Accounts {
       return data;
     } catch (e) {
       console.log(e);
+      return 0;
     }
   }
 
+  _removeItemRemotely = async (id) => {
+    // Trying to connect to remote
+    try {
+      const response = await fetch(Config.DeleteAccountLink(), {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify({
+          id: id
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      return data;
+    } catch (e) {
+      console.log(e);
+      return 0;
+    }
+  }
+
+  _updateItemRemotely = async (newAccount) => {
+    try {
+      const response = await fetch(Config.UpdateAccountLink(), {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify({
+          id: newAccount.Id,
+          username: newAccount.Username,
+          password: newAccount.Password,
+          platform: newAccount.Password,
+          website: newAccount.Website,
+          additionalInfo: newAccount.AdditionalInfo,
+          favorite: newAccount.Favorite,
+          createdOn: newAccount.CreatedOn,
+          editedOn: newAccount.EditedOn
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      console.log("[Update][Remote] response: ", data);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return 0;
+    }
+  }
 
 
   /**
@@ -104,7 +164,7 @@ export default class Accounts {
 
   _removeItemLocally = async (id) => {
     try {
-      console.log('[+] Request delete for account containing id: ' + id);
+      // console.log('[+] Request delete for account containing id: ' + id);
 
       await AsyncStorage.getItem(
           'passwordManager',
@@ -189,6 +249,23 @@ export default class Accounts {
     }
   }
 
+  _createToken = async (token) => {
+    try {
+      /*
+      token = {
+        type: 'update', // create || update || delete
+        account: '', // Account in JSON
+        time: '', // datetime in  string
+      }
+      */
+
+      // Send token to server
+
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
 
 
   /**
@@ -200,7 +277,7 @@ export default class Accounts {
     * */
     await this._retrieveDataLocally()
         .then( async (data) => {
-          console.log(data);
+          //console.log(data);
           /*
            * Getting local data
            * */
@@ -224,62 +301,109 @@ export default class Accounts {
           this.CalculateStrength();
           // Filtering Data
           this.FilterData();
-          /*
-          /!**
-           * Checking remote connection
-           * *!/
-          await this._checkRemoteConnection()
-              .then( async (result) => {
-                if (result === 1) {
-                  console.log('Connection success')
 
-                  /!**
-                   * Getting data from remote server
-                   * *!/
-                  this._retrieveDataRemotely()
-                      .then(async (result) => {
-                        console.log('[+] REMOTE: ', result)
+        });
+  }
 
-                        /!*
-                         * [{"_id": "63b77562d4414ef925a1aae7", "additionalInfo": "info", "createdOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (Coordinated Universal Time)", "editedOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (CoordinatedUniversal Time)", "favorite": true, "id": 1, "password": "password", "platform": "google", "username": "dhir0hit", "website": "google.com"}]
-                         * *!/
-                        for (const account of result) {
-                          if (!this.List.includes(account)) {
-                            // converting it to class object of Account
-                            let acc = new Account(
-                                account["username"],
-                                account["password"],
-                                account["platform"],
-                                account["website"],
-                                account["additionalInfo"],
-                                account["favorite"],
-                                account["createdOn"],
-                                account["editedOn"],
-                                account["id"]
-                            );
+  async load_remote_data() {
+    /**
+     * Checking remote connection
+     * */
+    // console.log("request remote data")
+    await this._checkRemoteConnection()
+        .then( async (result) => {
+          // console.log("remote data connection status", result)
+          if (result) {
+            // console.log('Connection success')
 
-                            await this.CreateAccount(acc).then(
-                                () => {
-                                  // this.empty_filters();
-                                  // // Calculate Strength
-                                  // this.CalculateStrength();
-                                  // // Filtering Data
-                                  // this.FilterData();
-                                })
-                              }
-                            }
+            /**
+             * Getting data from remote server
+             * */
+            await this._retrieveDataRemotely()
+                .then(async (result) => {
+                  // console.log('[+] REMOTE: ', result)
+                  // console.log('[+] Local: ', this.List)
+                  if (!result) {
+                    console.log("[-] DATA NOT LOADED!!!!")
+                  }
+                  /*
+                   * [{"_id": "63b77562d4414ef925a1aae7", "additionalInfo": "info", "createdOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (Coordinated Universal Time)", "editedOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (CoordinatedUniversal Time)", "favorite": true, "id": 1, "password": "password", "platform": "google", "username": "dhir0hit", "website": "google.com"}]
+                   * */
+                  for (const account of result) {
+                    // converting it to class object of Account
+                    let acc = new Account(
+                        account["username"],
+                        account["password"],
+                        account["platform"],
+                        account["website"],
+                        account["additionalInfo"],
+                        account["favorite"],
+                        account["createdOn"],
+                        account["editedOn"],
+                        account["id"]
+                    );
 
+                    // for (const _elem of this.List) {
+                    //
+                    //   if (_elem.Id != acc.Id) {
+                    //     console.log(acc.Id != _elem.Id)
 
+                    if (!this.List.length) {
+                      // console.log("didnt match");
+
+                      // adding new account if there is none matches from remote
+                      await this.CreateAccount(acc).then(
+                          () => {
                             this.empty_filters();
                             // Calculate Strength
                             this.CalculateStrength();
                             // Filtering Data
                             this.FilterData();
-                      })
-                }
+                          }
+                      )
+                    }
+                    for (let elem of this.List) {
+                      if (elem.Id === acc.Id) {
 
-              })*/
-        });
+                      // console.log("match");
+                        break;
+                      }
+                      if (this.List[this.List.length-1].Id === elem.Id) {
+                        // console.log("didnt match")
+
+                        // adding new account if there is none matches from remote
+                        await this.CreateAccount(acc).then(
+                            () => {
+                              this.empty_filters();
+                              // Calculate Strength
+                              this.CalculateStrength();
+                              // Filtering Data
+                              this.FilterData();
+                            }
+                        )
+                        break;
+                      }
+                    }
+
+
+                          }
+                      // }
+
+                      // this.empty_filters();
+                      // // Calculate Strength
+                      // this.CalculateStrength();
+                      // // Filtering Data
+                      // this.FilterData();
+                })
+          } else {
+            this.empty_filters();
+            // Calculate Strength
+            this.CalculateStrength();
+            // Filtering Data
+            this.FilterData();
+          }
+          // return result;
+        })
   }
 
   /**
@@ -290,7 +414,6 @@ export default class Accounts {
   async CreateAccount(account) {
     account.Id = ++this.LastAccountId;
     this.List.push(account);
-    console.log(this.List)
 
     await this._storeDataLocally(account)
         .then((result) => {
@@ -344,6 +467,33 @@ export default class Accounts {
           // Filtering Data
           this.FilterData();
         })
+
+    await this._checkRemoteConnection()
+        .then(async (result) => {
+          if (result) {
+            await this._updateItemRemotely(newAccount);
+          } else {
+            /*
+            * Create token for update
+            * */
+            // new instance of Date Object
+            const token = {
+              type: 'update',
+              account: JSON.stringify({
+                id             : newAccount.Id,
+                username       : newAccount.Username,
+                password       : newAccount.Password,
+                platform       : newAccount.Platform,
+                website        : newAccount.Website,
+                additionalInfo : newAccount.AdditionalInfo,
+                favorite       : newAccount.Favorite,
+                createdOn      : newAccount.CreatedOn,
+                editedOn       : newAccount.EditedOn
+              }),
+            }
+            //adding in storage
+          }
+        })
   }
 
   /**
@@ -367,12 +517,31 @@ export default class Accounts {
           if (!result) {
             this.List.push(tempAccount);
           }
+          
           // TODO: Delete account from database
           this.empty_filters();
           // Calculate Strength
           this.CalculateStrength();
           // Filtering Data
           this.FilterData();
+        })
+
+    await this._checkRemoteConnection()
+        .then(async (result) => {
+          if (result) {
+            await this._removeItemRemotely(id);
+          } else {
+            /*
+            * Create token for delete
+            * */
+            const token = {
+              type: 'delete',
+              account: JSON.stringify({
+                id: id,
+              })
+            }
+            // adding in storage
+          }
         })
   }
 

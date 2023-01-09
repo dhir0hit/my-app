@@ -1,72 +1,131 @@
-import {Component, Suspense, useEffect, useMemo, useState} from "react";
-import { ScrollView, StyleSheet, View } from "react-native";
-import { ThemedButton, ThemedText, ThemedView } from "../../components/ThemedComponents";
+// Inbuilt components
+import React, { useEffect, useState } from "react";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+
+// Importing custom components
+import { ThemedText, ThemedView } from "../../components/ThemedComponents";
+import Loading from "../../components/Loading"; // Loading components
 import NavChips from "../../components/NavChips"
 import MenuItem from "../../components/MenuItem";
 import Accounts from "../../service/Accounts";
 
 
-
-/*
-* TODO: TO many renders causing it to create multiple accounts 
-* */
-
 const PasswordManagerHome = (props) => {
-//    console.log("HOME")
-    const [TotalAccounts, setTotalAccounts] = useState(0)
-    const [FavoriteAccounts, setFavoriteAccounts] = useState(0)
-    const [RecentAccounts, setRecentAccounts] = useState(0)
-    const [WeakAccounts, setWeakAccounts] = useState(0)
-    const [MissingCredentialAccounts, setMissingCredentialAccounts] = useState(0)
-    const [PlatformFilterAccounts, setPlatformFilterAccounts] = useState(0)
+  /*
+  * State variable containing account numbers and strength
+  * */
+  const [AccountsInfo, setAccountsInfo] = useState({
+    TotalAccounts: 0,
+    FavoriteAccounts: 0,
+    RecentAccounts: 0,
+    WeakAccounts: 0,
+    MissingCredentialAccounts: 0,
+    PlatformFilterAccounts: 0,
 
-    const [OverallStrength, setOverallStrength] = useState(0)
-    const [StrongAccounts, setStrongAccounts] = useState(0)
-    const [NormalAccounts, setNormalAccounts] = useState(0)
-    const [StrengthProgressBarColor, setStrengthProgressBarColor] = useState(0)
+    OverallStrength: 0,
+    StrongAccounts: 0,
+    NormalAccounts: 0,
+    StrengthProgressBarColor: ''
+  })
 
-    const [appIsReady, setAppIsReady] = useState(false);
+  const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
 
-    const accountService = new Accounts();
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const [connectedRemotely, setConnectedRemotely] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    Update();
+    wait(2000).then(() => setRefreshing(false));
+  }, [])
+
+
+  const accountService = new Accounts();
+
+  useEffect(() => {
+    Update();
+    },
+    [accountService.List.length]
+  )
 
     const Update = () => {
-        console.log('[+] Update ...........................')
-
+      console.log()
+      console.log('[+] Update ...........................')
+      accountService.List = [];
         accountService.load_data()
             .then(() => {
+              /*
+              * Setting data to state
+              * */
+              setData();
 
-                console.log('[HOME][52]', accountService.List.length)
-                setTotalAccounts(() => accountService.List.length);
-                setFavoriteAccounts(() => accountService.favoriteList.length);
-                setRecentAccounts(() => accountService.recentList.length);
-                setWeakAccounts(() => accountService.weakList.length);
-                setMissingCredentialAccounts(() => accountService.missingCredentialsList.length);
-                setPlatformFilterAccounts(() => accountService.platformList.length);
-                setOverallStrength(() =>
-                    isNaN(accountService.OverallPasswordStrength)
-                        ? 0
-                        : accountService.OverallPasswordStrength.toFixed(2));
-                setStrongAccounts(() => accountService.StrongPasswords);
-                setNormalAccounts(() => accountService.NormalPasswords);
+              /**
+               * Getting remote data from server
+               *
+               * @process: Checking connection to remote server
+               * if server is not connected showing
+               * Toast message on screen
+               * */
+              // TODO: CREATE REMOTE CONNECTION HERE
 
-                if (OverallStrength > 70) {
-                    setStrengthProgressBarColor(() =>'green')
-                } else if (OverallStrength > 50) {
-                    setStrengthProgressBarColor(() =>'orange')
-                } else {
-                    setStrengthProgressBarColor(() =>'red')
-                }
+              accountService.load_remote_data()
+                  .then(() => {
+                    // result will be return if connection successful or not
+                    if (accountService.RemoteConnection) {
+                      /*
+                      * Setting data to state
+                      * */
+                      setConnectedRemotely(true);
+                      console.log("[+] [Home][Update][81]Connected To Server")
+                      setData();
+                    } else {
+                      // not connected
+                      setConnectedRemotely(false);
+                    }
+                  });
 
-                setAppIsReady(()=>true);
+              setAppIsReady(()=>true);
             });
     }
-    Update();
+
+    /**
+     * Setting data to state
+     * */
+    const setData = () => {
+      setAccountsInfo({
+        TotalAccounts: accountService.List.length,
+        FavoriteAccounts: accountService.favoriteList.length,
+        RecentAccounts: accountService.recentList.length,
+        WeakAccounts: accountService.weakList.length,
+        MissingCredentialAccounts: accountService.missingCredentialsList.length,
+        PlatformFilterAccounts: accountService.platformList.length,
+
+        OverallStrength: isNaN(accountService.OverallPasswordStrength)
+            ? 0
+            : accountService.OverallPasswordStrength.toFixed(2),
+        StrongAccounts: accountService.StrongPasswords,
+        NormalAccounts: accountService.NormalPasswords,
+
+        StrengthProgressBarColor: () => {
+          if (accountService.OverallPasswordStrength > 70) {
+            return 'green';
+          } else if (accountService.OverallPasswordStrength > 50) {
+            return 'orange';
+          } else {
+            return 'red';
+          }
+        }
+      })
+    }
 
     if (appIsReady) {
         return (
             <ThemedView style={{...styles.mainContainer, height: 50}}>
                 <View style={{backgroundColor: "rgba(255,255,255,0.18)", borderRadius: 10, overflow: "hidden"}}>
-                    <View style={{height: 50, width: `${OverallStrength}%`, backgroundColor: `${StrengthProgressBarColor}`}}></View>
+                    <View style={{height: 50, width: `${AccountsInfo.OverallStrength}%`, backgroundColor: `${AccountsInfo.StrengthProgressBarColor()}`}}></View>
                 </View>
                 <View style={{
                     display: "flex", flexDirection: "row", justifyContent: "space-between",
@@ -81,13 +140,21 @@ const PasswordManagerHome = (props) => {
                         <ThemedText style={styles.textStyle}>Weak</ThemedText>
                     </View>
                     <View>
-                        <ThemedText style={styles.textStyle}>{OverallStrength}%</ThemedText>
-                        <ThemedText style={styles.textStyle}>{StrongAccounts}</ThemedText>
-                        <ThemedText style={styles.textStyle}>{NormalAccounts}</ThemedText>
-                        <ThemedText style={styles.textStyle}>{WeakAccounts}</ThemedText>
+                        <ThemedText style={styles.textStyle}>{AccountsInfo.OverallStrength}%</ThemedText>
+                        <ThemedText style={styles.textStyle}>{AccountsInfo.StrongAccounts}</ThemedText>
+                        <ThemedText style={styles.textStyle}>{AccountsInfo.NormalAccounts}</ThemedText>
+                        <ThemedText style={styles.textStyle}>{AccountsInfo.WeakAccounts}</ThemedText>
                     </View>
                 </View>
-                <ScrollView>
+              <ThemedText>{connectedRemotely ? '' : 'Here it will be shown its loading'}</ThemedText>
+                <ScrollView
+                  refreshControl={
+                  <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                      />
+                  }
+                >
                     <ScrollView style={{padding: 5}} horizontal={true}>
                         <NavChips navigation={props.navigation}
                                   accountService={props.route.params.accountService}
@@ -102,37 +169,37 @@ const PasswordManagerHome = (props) => {
                     </ScrollView>
                     <View>
                         <MenuItem filter={"Total Accounts"}
-                                  number={TotalAccounts}
+                                  number={AccountsInfo.TotalAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Favorite Accounts"}
-                                  number={FavoriteAccounts}
+                                  number={AccountsInfo.FavoriteAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Recent Accounts"}
-                                  number={RecentAccounts}
+                                  number={AccountsInfo.RecentAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Weak Accounts"}
-                                  number={WeakAccounts}
+                                  number={AccountsInfo.WeakAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Missing Credentials"}
-                                  number={MissingCredentialAccounts}
+                                  number={AccountsInfo.MissingCredentialAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Platform Filter"}
-                                  number={PlatformFilterAccounts}
+                                  number={AccountsInfo.PlatformFilterAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
@@ -143,9 +210,10 @@ const PasswordManagerHome = (props) => {
         )
     }
     else {
-        return <ThemedView style={{...styles.mainContainer, flexDirection: 'row', justifyContent: 'center', alignItems: 'center'}}>
-            <ThemedText>Loading...</ThemedText>
-        </ThemedView>;
+      /**
+       * If app is not ready show loading
+       * */
+        return <Loading />;
     }
 }
 export default PasswordManagerHome;

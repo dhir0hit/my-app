@@ -230,7 +230,7 @@ export function ThemedAntDesign(props) {// getting current color scheme
                     "dropbox", "gitlab", "skype", "youtube", "wechat", "twitter", "html",
                     "codesandbox", "dribbble", "wifi", 'star', 'copy1', 'eyeo', 'eye', 'setting',
                     'sync', 'plus', 'bars', 'clockcircleo', 'exclamationcircle', 'warning', 'left',
-                    'scan1', 'staro', 'close', 'edit', 'delete'
+                    'scan1', 'staro', 'close', 'edit', 'delete', 'loading2'
                 ];
 
                 let accountIcon = ""

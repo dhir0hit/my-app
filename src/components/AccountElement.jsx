@@ -1,6 +1,9 @@
-import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import {Image, StyleSheet, View} from "react-native";
 import {Component} from "react";
+
+// Importing Custom Elements
+import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents"; // Themed components
+import Loading from "./Loading"; // Loading components
 
 export class AccountElement extends Component {
     constructor(props) {
