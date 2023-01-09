@@ -1,5 +1,3 @@
-import {expectNoConsoleError} from "react-native/Libraries/Utilities/ReactNativeTestTools";
-
 const CryptoJS = require('crypto-js');
 
 export default class Account {
