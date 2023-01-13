@@ -22,20 +22,9 @@ export default class Accounts {
     this.FilterData();
   }
 
-  /**
-   * Checking Remote Connection
+  /*
+   * Emptying filters
    * */
-  async _checkRemoteConnection() {
-    try {
-      let response = await fetch(Config.CheckConnection);
-      let result = await response.json();
-      this.RemoteConnection = true;
-      return result;
-    } catch (e) {
-      return 0;
-    }
-  }
-
   empty_filters() {
     // Favorite Accounts List
     this.favoriteList = []
@@ -58,12 +47,43 @@ export default class Accounts {
     this.LastAccountId = 0
   }
 
-  /**
-   *
-   * Online data handling
-   *
-   * */
 
+
+  /**
+   * Checking Remote Connection
+   * @return JSON
+   * @returns Result of API
+   * */
+  async _checkRemoteConnection() {
+    try {
+      let response = await fetch(Config.CheckConnection);
+      let result = await response.json();
+      this.RemoteConnection = true;
+      return result;
+    } catch (e) {
+      return 0;
+    }
+  }
+
+
+
+
+
+/**
+ *
+ * Online data handling
+ *
+ * */
+
+
+
+
+  /**
+   * Getting Data Remotely,
+   * Using API.
+   * @return JSON
+   * @returns result of API
+   * */
   _retrieveDataRemotely = async () => {
     // Trying to connect to remote
     try {
@@ -76,6 +96,13 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Reoving Item Remotely,
+   * Using API.
+   * @param id
+   * @return boolean
+   * @returns result of API
+   * */
   _removeItemRemotely = async (id) => {
     // Trying to connect to remote
     try {
@@ -97,6 +124,13 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Updating Item Remotely,
+   * Using API.
+   * @param newAccount
+   * @return boolean
+   * @returns result of API
+   * */
   _updateItemRemotely = async (newAccount) => {
     try {
       const response = await fetch(Config.UpdateAccountLink(), {
@@ -126,13 +160,71 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Creating Item Remotely,
+   * Using API.
+   * @param newAccount
+   * @return boolean
+   * @returns result of API
+   * */
+  _createItemRemotely = async (newAccount) => {
+    try {
+      /*
+      * Creating fetch request and
+      * assigning result to response
+      * */
+      const response = await fetch(Config.CreateAccountLink(), {
+        method: "POST",
+        mode: "cors",
+        body: JSON.stringify({
+          id: newAccount.Id,
+          username: newAccount.Username,
+          password: newAccount.Password,
+          platform: newAccount.Password,
+          website: newAccount.Website,
+          additionalInfo: newAccount.AdditionalInfo,
+          favorite: newAccount.Favorite,
+          createdOn: newAccount.CreatedOn,
+          editedOn: newAccount.EditedOn
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      const data = await response.json();
+      console.log("[Create][Remote] response: ", data);
+      return data;
+    } catch (e) {
+      console.log(e);
+      return 0;
+    }
+  }
+
+
+
+
+
+
+/**
+ *
+ * Local Data handling
+ *
+ * */
+
+
+
 
   /**
-   *
-   * Local Data handling
-   *
+   * Creating Item Locally,
+   * using key 'passwordManager'
+   * @requires AsyncStorage
+   * @return boolean
+   * @returns TURE if removed item Locally, FALSE if unable to remove item locally
    * */
   _storeDataLocally = async (newAccount) => {
+    /*
+    * Creating account json and assigning to newAccount variable
+    * */
     newAccount = {
       id             : newAccount.Id,
       username       : newAccount.Username,
@@ -144,12 +236,20 @@ export default class Accounts {
       createdOn      : newAccount.CreatedOn,
       editedOn       : newAccount.EditedOn
     }
+    // Trying to store in Local Storage
     try {
+      /*
+      * Getting JSON from Local Storage
+      * */
       await AsyncStorage.getItem('passwordManager', async (error, result) => {
-        let data = JSON.parse(result)
+        // creating new variable for storing returned json
+        let data = JSON.parse(result); // parsing json from string to json
+        // pushing account in returned json data
         data.push(newAccount);
 
-        // Setting Data
+        /*
+         * Setting updated JSON to Local Storage
+         * */
         await AsyncStorage.setItem(
             'passwordManager',
             JSON.stringify(data)
@@ -162,24 +262,35 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Removing Item Locally,
+   * using key 'passwordManager'
+   * @requires AsyncStorage
+   * @return boolean
+   * @returns TRUE if removed item locally, False if unable to remove item locally
+   * */
   _removeItemLocally = async (id) => {
     try {
-      // console.log('[+] Request delete for account containing id: ' + id);
-
+      /*
+      * Getting JSON from Local Storage
+      * */
       await AsyncStorage.getItem(
           'passwordManager',
           async (error, result) => {
-            let data = JSON.parse(result);
+            // creating new variable for storing returned json
+            let data = JSON.parse(result); // parsing json from string to json
             data = data.filter((account) => {
-              return account.id != id;
+              // returning false if account id matches with [@param] requested id
+              return account.id !== id;
             });
 
-            console.log(data);
-
+            /*
+            * Setting updated JSON to Local Storage
+            * */
             await AsyncStorage.setItem(
                 'passwordManager',
                 JSON.stringify(data)
-            );
+            )
           }
       )
       return 1;
@@ -189,6 +300,13 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Updating Item Locally,
+   * using key 'passwordManager'
+   * @requires AsyncStorage
+   * @return boolean
+   * @returns TRUE if updated item locally, False if unable to update item locally
+   * */
   _updateItemLocally = async (newAccount) => {
     newAccount = {
       id             : newAccount.Id,
@@ -225,46 +343,125 @@ export default class Accounts {
     }
   }
 
+  /**
+   * Retrieve Data Locally,
+   * using key 'passwordManager'
+   * @requires AsyncStorage
+   * @returns accounts JSON
+   * */
   _retrieveDataLocally = async () => {
     try {
       const accounts = await AsyncStorage.getItem('passwordManager');
       if (accounts !== null) {
         return accounts;
       } else {
-
         // Trying to Create new database in local storage
-        console.log("CREATING NEW DB")
+        console.log("CREATING NEW PASSWORD MANAGER DB");
         try {
           await AsyncStorage.setItem(
               'passwordManager',
-              JSON.stringify([]), // JSON.stringify({})
+              JSON.stringify([]),
           );
         } catch (e) {
-          return "ERROR SAVING DATA";
+          console.log(e);
+          return 0;
         }
-        return "NO ACCOUNTS";
+        return 0;
       }
     } catch (e) {
       console.log(e);
+      return 0;
     }
   }
 
-  _createToken = async (token) => {
+
+
+
+
+
+  /**
+   * Create Token for Updating in Local Storage
+   *
+   * @param type (String) create || update || delete
+   * @param account (JSON)
+   * @param time (string) Date String
+   *
+   * @return JSON
+   * */
+  _createToken = async (type, account, time) => {
+    const token = {
+      type: type, // create || update || delete
+      account: account, // Account in JSON
+      time: time, // datetime in  string
+    }
+    // create token in Storage
     try {
       /*
-      token = {
-        type: 'update', // create || update || delete
-        account: '', // Account in JSON
-        time: '', // datetime in  string
-      }
-      */
+      * Getting JSON from Local Storage
+      * */
+      await AsyncStorage.getItem('passwordManagerToken', async (error, result) => {
+        // creating new variable from storing returned JSON
+        let data = JSON.parse(result); // parsing json from string to json
+        // pushing account in returned json data
+        data.push(token);
 
-      // Send token to server
-
+        /*
+        * Setting updated JSON to Local Storage
+        * */
+        await AsyncStorage.setItem(
+            'passwordManagerToken',
+            JSON.stringify(data)
+        )
+      })
+      return 1;
     } catch (e) {
       console.log(e)
+      return 0;
     }
   }
+
+  /**
+   * Getting Token for reading in Local Storage
+   *
+   * @return JSON
+   * */
+  async _readToken () {
+    try {
+      const passwordManagerToken = await AsyncStorage.getItem('passwordManagerToken');
+      if (passwordManagerToken !== null) {
+        console.log('[token]', passwordManagerToken);
+        return passwordManagerToken;
+      } else {
+        // Trying to Create new database in local Storage
+        console.log("Creating New Token DB");
+        try {
+          await AsyncStorage.setItem(
+              'passwordManagerToken',
+              JSON.stringify([]),
+          )
+        } catch (e) {
+          console.log(e);
+          return 0;
+        }
+        return 0;
+      }
+
+    } catch (e) {
+      console.log(e);
+      return 0;
+    }
+  }
+
+  async _sendTokens () {
+    try {
+      const response = await fetch(Config.SendTokenLink())
+    } catch (e) {
+      console.log(e)
+      return 0;
+    }
+  }
+
+
 
 
 
@@ -272,37 +469,35 @@ export default class Accounts {
    * Load data from database
    * */
   async load_data() {
-    /*
-    * TODO: Create Connection with database
-    * */
     await this._retrieveDataLocally()
         .then( async (data) => {
-          //console.log(data);
           /*
            * Getting local data
            * */
-          for (const account of JSON.parse(data)) {
-            let acc = new Account(
-                account["username"],
-                account["password"],
-                account["platform"],
-                account["website"],
-                account["additionalInfo"],
-                account["favorite"],
-                account["createdOn"],
-                account["editedOn"],
-                account["id"]
-            );
-            this.List.push(acc);
+          if (data) {
+            for (const account of JSON.parse(data)) {
+              let acc = new Account(
+                  account["username"],
+                  account["password"],
+                  account["platform"],
+                  account["website"],
+                  account["additionalInfo"],
+                  account["favorite"],
+                  account["createdOn"],
+                  account["editedOn"],
+                  account["id"]
+              );
+              this.List.push(acc);
+            }
+
+            this.empty_filters();
+            // Calculate Strength
+            this.CalculateStrength();
+            // Filtering Data
+            this.FilterData();
           }
-
-          this.empty_filters();
-          // Calculate Strength
-          this.CalculateStrength();
-          // Filtering Data
-          this.FilterData();
-
         });
+    await this._readToken();
   }
 
   async load_remote_data() {
@@ -312,23 +507,17 @@ export default class Accounts {
     // console.log("request remote data")
     await this._checkRemoteConnection()
         .then( async (result) => {
-          // console.log("remote data connection status", result)
           if (result) {
-            // console.log('Connection success')
-
-            /**
+            /*
              * Getting data from remote server
              * */
             await this._retrieveDataRemotely()
                 .then(async (result) => {
-                  // console.log('[+] REMOTE: ', result)
-                  // console.log('[+] Local: ', this.List)
+
                   if (!result) {
                     console.log("[-] DATA NOT LOADED!!!!")
                   }
-                  /*
-                   * [{"_id": "63b77562d4414ef925a1aae7", "additionalInfo": "info", "createdOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (Coordinated Universal Time)", "editedOn": "Fri Jan 06 2023 01:12:02 GMT+0000 (CoordinatedUniversal Time)", "favorite": true, "id": 1, "password": "password", "platform": "google", "username": "dhir0hit", "website": "google.com"}]
-                   * */
+
                   for (const account of result) {
                     // converting it to class object of Account
                     let acc = new Account(
@@ -343,15 +532,10 @@ export default class Accounts {
                         account["id"]
                     );
 
-                    // for (const _elem of this.List) {
-                    //
-                    //   if (_elem.Id != acc.Id) {
-                    //     console.log(acc.Id != _elem.Id)
-
                     if (!this.List.length) {
-                      // console.log("didnt match");
-
-                      // adding new account if there is none matches from remote
+                      /*
+                      * TODO: Create item locally not remotely
+                      * */
                       await this.CreateAccount(acc).then(
                           () => {
                             this.empty_filters();
@@ -364,14 +548,12 @@ export default class Accounts {
                     }
                     for (let elem of this.List) {
                       if (elem.Id === acc.Id) {
-
-                      // console.log("match");
                         break;
                       }
                       if (this.List[this.List.length-1].Id === elem.Id) {
-                        // console.log("didnt match")
-
-                        // adding new account if there is none matches from remote
+                        /*
+                         * Adding new account if there is none matches from remote
+                         * */
                         await this.CreateAccount(acc).then(
                             () => {
                               this.empty_filters();
@@ -384,17 +566,11 @@ export default class Accounts {
                         break;
                       }
                     }
+                  }
+                });
+            /*TODO: SEND TOKENS*/
+            /*TODO: GET TOKENS*/
 
-
-                          }
-                      // }
-
-                      // this.empty_filters();
-                      // // Calculate Strength
-                      // this.CalculateStrength();
-                      // // Filtering Data
-                      // this.FilterData();
-                })
           } else {
             this.empty_filters();
             // Calculate Strength
@@ -402,34 +578,74 @@ export default class Accounts {
             // Filtering Data
             this.FilterData();
           }
-          // return result;
         })
+
   }
 
-  /**
-   * Add account to database
-   * and add in list
-   * @param account Account model
-   * */
-  async CreateAccount(account) {
-    account.Id = ++this.LastAccountId;
-    this.List.push(account);
 
-    await this._storeDataLocally(account)
+
+
+
+  /**
+   * Add account to database and local-storage
+   * and add in list
+   * @param newAccount Account model
+   * */
+  async CreateAccount(newAccount) {
+    newAccount.Id = ++this.LastAccountId;
+    this.List.push(newAccount);
+
+    /*
+    * Removing Item from Local Storage
+    *
+    * If it fails then Updating it in List
+    * */
+    await this._storeDataLocally(newAccount)
         .then((result) => {
           // If account did not store, removing it from list
           if (!result) {
             this.List = this.List.filter((acc) => {
-              return acc.Id !== account.Id;
+              return acc.Id !== newAccount.Id;
             });
           }
 
-          // TODO: Add account to database
           this.empty_filters();
           // Calculate Strength
           this.CalculateStrength();
           // Filtering Data
           this.FilterData();
+        })
+
+    /*
+    * Removing Item from Remote Storage
+    *
+    * If there is no connection to server
+    * else
+    * -- Create Token --
+    * */
+    await this._checkRemoteConnection()
+        .then(async (result) => {
+          if (result) {
+            await this._createItemRemotely(newAccount)
+          } else {
+            /*
+            * Create token for create
+            * */
+            const tokenAccount = JSON.stringify({
+              id             : newAccount.Id,
+              username       : newAccount.Username,
+              password       : newAccount.Password,
+              platform       : newAccount.Platform,
+              website        : newAccount.Website,
+              additionalInfo : newAccount.AdditionalInfo,
+              favorite       : newAccount.Favorite,
+              createdOn      : newAccount.CreatedOn,
+              editedOn       : newAccount.EditedOn
+            });
+            const date = new Date();
+            // adding it in the storage
+            await this._createToken('create', tokenAccount, date.toString());
+          }
         })
 
   }
@@ -451,6 +667,11 @@ export default class Accounts {
           : account;
     });
 
+    /*
+    * Removing Item from Local Storage
+    *
+    * If it fails then Updating it in List
+    * */
     await this._updateItemLocally(newAccount)
         .then((result) => {
           // If account did not change, changing it back to original
@@ -460,7 +681,6 @@ export default class Accounts {
                 : account;
           });
 
-          // TODO: Update Account from database
           this.empty_filters();
           // Calculate Strength
           this.CalculateStrength();
@@ -468,6 +688,13 @@ export default class Accounts {
           this.FilterData();
         })
 
+    /*
+    * Updating Item from Remote Storage
+    *
+    * If there is no connection to server
+    * else
+    * -- Create Token --
+    * */
     await this._checkRemoteConnection()
         .then(async (result) => {
           if (result) {
@@ -476,22 +703,20 @@ export default class Accounts {
             /*
             * Create token for update
             * */
-            // new instance of Date Object
-            const token = {
-              type: 'update',
-              account: JSON.stringify({
-                id             : newAccount.Id,
-                username       : newAccount.Username,
-                password       : newAccount.Password,
-                platform       : newAccount.Platform,
-                website        : newAccount.Website,
-                additionalInfo : newAccount.AdditionalInfo,
-                favorite       : newAccount.Favorite,
-                createdOn      : newAccount.CreatedOn,
-                editedOn       : newAccount.EditedOn
-              }),
-            }
+            const tokenAccount = JSON.stringify({
+              id             : newAccount.Id,
+              username       : newAccount.Username,
+              password       : newAccount.Password,
+              platform       : newAccount.Platform,
+              website        : newAccount.Website,
+              additionalInfo : newAccount.AdditionalInfo,
+              favorite       : newAccount.Favorite,
+              createdOn      : newAccount.CreatedOn,
+              editedOn       : newAccount.EditedOn
+            });
+            const date = new Date()
             //adding in storage
+            await this._createToken('update', tokenAccount, date.toString());
           }
         })
   }
@@ -511,14 +736,17 @@ export default class Accounts {
       return account.Id !== id;
     });
 
+    /*
+    * Removing Item from Local Storage
+    *
+    * If it fails then Updating it in List
+    * */
     await this._removeItemLocally(id)
         .then((result) => {
           // If account did not delete, changing it back to original
           if (!result) {
             this.List.push(tempAccount);
           }
-          
-          // TODO: Delete account from database
           this.empty_filters();
           // Calculate Strength
           this.CalculateStrength();
@@ -526,6 +754,13 @@ export default class Accounts {
           this.FilterData();
         })
 
+    /*
+    * Removing Item from Remote Storage
+    *
+    * If there is no connection to server
+    * else
+    * -- Create Token --
+    * */
     await this._checkRemoteConnection()
         .then(async (result) => {
           if (result) {
@@ -534,16 +769,20 @@ export default class Accounts {
             /*
             * Create token for delete
             * */
-            const token = {
-              type: 'delete',
-              account: JSON.stringify({
+            const tokenAccount = JSON.stringify({
                 id: id,
-              })
-            }
+            })
+            const date = new Date();
             // adding in storage
+            await this._createToken('delete', tokenAccount, date.toString());
           }
         })
   }
+
+
+
+
+
 
 
   /**

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
 
 // Importing custom components
-import { ThemedText, ThemedView } from "../../components/ThemedComponents";
+import {ThemedAntDesign, ThemedText, ThemedView} from "../../components/ThemedComponents";
 import Loading from "../../components/Loading"; // Loading components
 import NavChips from "../../components/NavChips"
 import MenuItem from "../../components/MenuItem";
@@ -55,7 +55,9 @@ const PasswordManagerHome = (props) => {
       console.log()
       console.log('[+] Update ...........................')
       accountService.List = [];
-        accountService.load_data()
+      setConnectedRemotely(false);
+
+      accountService.load_data()
             .then(() => {
               /*
               * Setting data to state
@@ -81,9 +83,6 @@ const PasswordManagerHome = (props) => {
                       setConnectedRemotely(true);
                       console.log("[+] [Home][Update][81]Connected To Server")
                       setData();
-                    } else {
-                      // not connected
-                      setConnectedRemotely(false);
                     }
                   });
 
@@ -146,7 +145,10 @@ const PasswordManagerHome = (props) => {
                         <ThemedText style={styles.textStyle}>{AccountsInfo.WeakAccounts}</ThemedText>
                     </View>
                 </View>
-              <ThemedText>{connectedRemotely ? '' : 'Here it will be shown its loading'}</ThemedText>
+              <View style={{display: connectedRemotely ? 'none' : 'flex', flexDirection: 'row', justifyContent: 'center', paddingTop: 5}}>
+                <ThemedAntDesign style={{color: 'orange'}} size={15} name={'warning'} />
+                <ThemedText style={{color: 'orange', textTransform: 'uppercase', paddingLeft: 5}}>Unable to connect with Server</ThemedText>
+              </View>
                 <ScrollView
                   refreshControl={
                   <RefreshControl
