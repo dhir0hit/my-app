@@ -1,5 +1,5 @@
 import {View, Clipboard} from "react-native";
-import {ThemedAntDesign, ThemedButton, ThemedText} from "../../../my-app/src/components/ThemedComponents";
+import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import HiddenText from "./HiddenText";
 import {useState} from "react";
 

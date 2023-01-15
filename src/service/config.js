@@ -23,7 +23,10 @@ const ServerConfig =
         }
     }
 
-export default class Config {
+class Config {
+    constructor(props) {
+    }
+
     /**
      * Creating Link for index controller api
      * */
@@ -63,3 +66,4 @@ export default class Config {
         return this.pwdManagerBackendLink + ServerConfig.api.passwordManager.routes.sendToken + '/';
     }
 }
+export default Config;

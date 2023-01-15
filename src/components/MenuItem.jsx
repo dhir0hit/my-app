@@ -1,5 +1,5 @@
 import {Image, StyleSheet, View} from "react-native";
-import {ThemedAntDesign, ThemedButton, ThemedText} from "../../../my-app/src/components/ThemedComponents";
+import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import {Component, useEffect} from "react";
 import Accounts from "../service/Accounts";
 
