@@ -15,7 +15,9 @@ const ServerConfig =
                     getOne: "account", // Get One Accounts Page
                     create: "create",  // Create  Account  Page
                     update: "update",  // Update  Account  Page
-                    delete: "delete"   // Delete  Account  Page
+                    delete: "delete",   // Delete  Account  Page
+
+                    sendToken: "create-tokken"
                 }
             }
         }
@@ -54,5 +56,10 @@ export default class Config {
     static DeleteAccountLink() {
         // DELETE ACCOUNT
         return this.pwdManagerBackendLink + ServerConfig.api.passwordManager.routes.delete + '/';
+    }
+
+    static SendTokenLink() {
+        // DELETE ACCOUNT
+        return this.pwdManagerBackendLink + ServerConfig.api.passwordManager.routes.sendToken + '/';
     }
 }

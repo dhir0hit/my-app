@@ -1,4 +1,4 @@
-class GenerateString {
+export default class GenerateString {
     constructor() {
     }
 

@@ -1,4 +1,4 @@
-import {ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
+import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
 import {StyleSheet, View} from "react-native";
 import {Component, useState} from "react";
 import Accounts from "../../service/Accounts";
@@ -66,7 +66,7 @@ export default class PasswordManagerLanding extends Component {
                         <ThemedText style={{...styles.titleStyle}}>{pinList[2] === undefined ? "_" : pinList[2]}</ThemedText>
                         <ThemedText style={{...styles.titleStyle}}>{pinList[3] === undefined ? "_" : pinList[3]}</ThemedText>
                     </View>
-                    <ThemedText>ERROR</ThemedText>
+                    {/*<ThemedText>ERROR</ThemedText>*/}
                 </View>
                 <View style={{flex: 3, padding: 2,}}>
                     <View style={{...styles.flexRow}}>
@@ -104,13 +104,17 @@ export default class PasswordManagerLanding extends Component {
                     </View>
                     <View style={{...styles.flexRow}}>
                         <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("x")}}>
-                            <ThemedText theme={"highlight"}>X</ThemedText>
+                            <ThemedText theme={"highlight"}>
+                                <ThemedAntDesign name={'close'} />
+                            </ThemedText>
                         </ThemedButton>
                         <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("0")}}>
                             <ThemedText theme={"highlight"}>0</ThemedText>
                         </ThemedButton>
                         <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("/")}}>
-                            <ThemedText theme={"highlight"}>/</ThemedText>
+                            <ThemedText theme={"highlight"}>
+                                <ThemedAntDesign name={'check'} />
+                            </ThemedText>
                         </ThemedButton>
                     </View>
                 </View>

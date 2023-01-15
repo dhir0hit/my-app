@@ -50,10 +50,10 @@ export default class PasswordManagerDetail extends Component {
         const { userPassword } = this.state;
         let _passwordStrength = new PasswordStrength(userPassword);
         this.setState({
-            accountStrength: _passwordStrength.StrengthPercentage / 20
+            accountStrength:  ( _passwordStrength.StrengthPercentage / 20)
         })
 
-        console.log(this.state.accountStrength);
+        // console.log(_passwordStrength.StrengthPercentage / 20);
 
     }
 
@@ -119,7 +119,7 @@ export default class PasswordManagerDetail extends Component {
 
     Submit() {
         const account = this.props.route.params.account
-        const {username, userPassword, userPlatform, userWebsite, additionalInfo, isFavorite} = this.state;
+        const {username, userPassword, userPlatform, userWebsite, additionalInfo, isFavorite, accountStrength} = this.state;
         /*
         * If Account is changed update the account
         * */
@@ -148,7 +148,7 @@ export default class PasswordManagerDetail extends Component {
     }
 
     render() {
-        const {isEditMode, username, userPassword, userPlatform, userWebsite, additionalInfo, isFavorite} = this.state;
+        const {isEditMode, username, userPassword, userPlatform, userWebsite, additionalInfo, isFavorite, accountStrength} = this.state;
         return (
             <ThemedView style={styles.container}>
                 <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
@@ -182,7 +182,7 @@ export default class PasswordManagerDetail extends Component {
                         </ThemedButton>
                     </View>
                 </View>
-                <ProgressBar style={{marginVertical: 7}} progress={0.5} color={"#49B5F2"}/>
+                <ProgressBar style={{marginVertical: 7}} progress={accountStrength} color={"#49B5F2"}/>
                 <ScrollView>
                     <View style={{
                         display: "flex",

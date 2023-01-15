@@ -15,6 +15,7 @@ class NavChips extends Component {
             this.iconName = "setting"
         }
 
+        console.log(this.props.accountService.List);
         this.update = this.update.bind(this)
     }
 

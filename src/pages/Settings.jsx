@@ -1,18 +1,15 @@
-import React, {Component} from "react";
+import React from "react";
 import {ThemedText, ThemedView} from "../components/ThemedComponents";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default class Settings extends Component{
-   constructor(props) {
-       super(props)
-   }
+export default function Settings() {
 
-   render() {
-       return (
-           <ThemedView
-               style={{flex:1, alignItems: "center", justifyContent: "center"}}
-           >
-               <ThemedText>Settings</ThemedText>
-           </ThemedView>
-       )
-   }
+
+  return (
+      <ThemedView
+          style={{flex: 1, alignItems: "center", justifyContent: "center"}}
+      >
+        <ThemedText>Settings</ThemedText>
+      </ThemedView>
+  )
 }
