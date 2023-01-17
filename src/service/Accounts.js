@@ -1,7 +1,7 @@
 import Account from "../model/Account";
 import PasswordStrength from "../utils/PasswordStrength";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Config from "./config";
+import Config from "./Config";
 
 // TODO: CREATE DATABASE WHEN NEW ACCOUNT CREATED
 export default class Accounts {

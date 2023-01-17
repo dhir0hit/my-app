@@ -4,6 +4,7 @@ const ServerConfig =
             protocol: "http", // http or https
             hostname: "10.0.0.112", // xxx.xxx.xxx.xxx or www.example.domain.com
             port    : "5000", // 80 || 5000
+            codeServer: "5050",
             index: {
                 name: '',
                 checkConnection: 'check-connection',

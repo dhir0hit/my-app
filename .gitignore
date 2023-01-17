@@ -1,6 +1,5 @@
 node_modules/
 .expo/
-src/service/config.js
 dist/
 npm-debug.*
 *.jks
