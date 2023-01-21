@@ -56,6 +56,18 @@ async function Settings() {
   }
 }
 
+async function SetSettings(settings) {
+  try {
+    await AsyncStorage.setItem(
+        'settings',
+        settings
+    )
+    return 1;
+  } catch (e) {
+    return 0;
+  }
+}
+
 async function GetPin() {
   try {
     const settings = await AsyncStorage.getItem('settings');
@@ -186,4 +198,4 @@ async function SetFontSize(fontSize) {
 }
 
 export default Settings;
-export {SetName, GetName, SetPin, GetPin, SetFontSize, GetFontSize, SettingsStorageJSONFormat}
+export {SetSettings, SetName, GetName, SetPin, GetPin, SetFontSize, GetFontSize, SettingsStorageJSONFormat}

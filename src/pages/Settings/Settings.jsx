@@ -9,7 +9,7 @@ import {LinearGradient} from "expo-linear-gradient";
 
 // Importing custom components
 import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
-import {default as SettingService, SetFontSize} from "../../service/Settings";
+import {default as SettingService, SetSettings, SetFontSize} from "../../service/Settings";
 import Loading from "../../components/Loading";
 
 const Themes = {
@@ -84,7 +84,14 @@ export default function Settings(props) {
       fontSize: settings.fontSize,
       theme: theme
     };
-    setSettings(temp);
+    SetSettings(JSON.stringify(temp))
+        .then((result) => {
+          if (result) {
+            setSettings(temp);
+            props.route.params.settingsService();
+          }
+          /*TODO: display error*/
+        })
   }
 
 

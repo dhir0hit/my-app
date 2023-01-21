@@ -5,6 +5,7 @@ import {useEffect, useState} from "react";
 import Loading from "../components/Loading";
 import Settings, {SettingsStorageJSONFormat} from "../service/Settings";
 import {LinearGradient} from "expo-linear-gradient";
+import {useIsFocused} from "@react-navigation/native";
 
 function Home(props) {
   const [isReady, setReady] = useState(0);
@@ -23,20 +24,27 @@ function Home(props) {
       }
   );
 
-  Settings()
-      .then((value) => {
-        let result = JSON.parse(value);
+  const isFocused = useIsFocused()
 
-        settings['username'] = result['username'];
-        settings['pin'] = result['pin'];
-        settings['fontSize'] = result['fontSize'];
-        settings['theme'] = result['theme'];
+  useEffect(() => {}, [isFocused]);
 
-        setSettings(settings);
-        // console.log(result['pin'])
-        setReady(1);
-      })
-  ;
+  function loadSettingService () {
+    Settings()
+        .then((value) => {
+          let result = JSON.parse(value);
+
+          settings['username'] = result['username'];
+          settings['pin'] = result['pin'];
+          settings['fontSize'] = result['fontSize'];
+          settings['theme'] = result['theme'];
+
+          setSettings(settings);
+          // console.log(result['pin'])
+          setReady(1);
+        })
+    ;
+  }
+  loadSettingService();
 
   // console.log(settings['theme']);
   if (isReady) {
@@ -76,7 +84,7 @@ function Home(props) {
             <ThemedButton
                 style={{...styles.button, backgroundColor: settings.theme.secondary+'90'}}
                 onPress={() => {
-                  props.navigation.navigate('Settings')
+                  props.navigation.navigate('Settings', {settingsService: loadSettingService})
                 }}
             >
               <ThemedText style={{...styles.titleStyle, color: settings.theme.text}} theme={'highlight'}>

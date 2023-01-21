@@ -12,6 +12,7 @@ import {Component, useEffect, useRef, useState} from "react";
 import PasswordStrength from "../../utils/PasswordStrength";
 import Settings from "../../service/Settings";
 import Loading from "../../components/Loading";
+import {LinearGradient} from "expo-linear-gradient";
 
 
 /*
@@ -188,7 +189,13 @@ export default class PasswordManagerDetail extends Component {
 
         if (isReady) {
             return (
-                <View style={{...styles.container, backgroundColor: settings.theme.background}}>
+                <View style={{flex: 1}}>
+                    <LinearGradient
+                        style={{...styles.container, backgroundColor: settings.theme.background}}
+                        start={{x: 0, y: 0.5}}
+                        end={{x: 1, y: 1}}
+                        colors={[settings.theme.background, settings.theme.secondary]}
+                    >
                     <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                         <ThemedButton onPress={() => {
                             this.props.navigation.goBack()
@@ -295,6 +302,7 @@ export default class PasswordManagerDetail extends Component {
                         </View>
 
                     </ScrollView>
+                    </LinearGradient>
                 </View>
             )
         } else {
