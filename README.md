@@ -7,27 +7,25 @@ needs expo account
 <p>Change Config.js under <strong>src/service</strong></p>
 
 ```js
-{
-        api: {
-            protocol: "http", // http or https
-            hostname: "0.0.0.0", // xxx.xxx.xxx.xxx or www.example.domain.com
-            port    : "5000", // 80 || 5000
-            codeServer: "5050",
-            index: {
-                name: '',
-                checkConnection: 'check-connection',
-            },
-            passwordManager: {
-                name    : "pwdmanager", // Controller for password manager
-                routes: {
-                    getAll: "get-all", // Get All Accounts Page
-                    getOne: "account", // Get One Accounts Page
-                    create: "create",  // Create  Account  Page
-                    update: "update",  // Update  Account  Page
-                    delete: "delete",   // Delete  Account  Page
+api: {
+        protocol: "http", // http or https
+        hostname: "0.0.0.0", // xxx.xxx.xxx.xxx or www.example.domain.com
+        port    : "5000", // 80 || 5000
+        codeServer: "5050",
+        index: {
+            name: '',
+            checkConnection: 'check-connection',
+        },
+        passwordManager: {
+            name    : "pwdmanager", // Controller for password manager
+            routes: {
+                getAll: "get-all", // Get All Accounts Page
+                getOne: "account", // Get One Accounts Page
+                create: "create",  // Create  Account  Page
+                update: "update",  // Update  Account  Page
+                delete: "delete",   // Delete  Account  Page
 
-                    sendToken: "create-tokken"
-                }
+                sendToken: "create-tokken"
             }
         }
     }
