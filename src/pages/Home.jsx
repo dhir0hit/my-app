@@ -82,7 +82,7 @@ function Home(props) {
             <ThemedButton
                 style={{...styles.button, backgroundColor: settings.theme.secondary+'90'}}
                 onPress={() => {
-                  props.navigation.navigate('Profile', {name: 'Rohit'})
+                  props.navigation.navigate('Profile', {name: 'User'})
                 }}
             >
               <ThemedText style={{...styles.titleStyle, color: settings.theme.text}} theme={'highlight'}>
