@@ -1,4 +1,4 @@
-import {View, Clipboard} from "react-native";
+import {View, Clipboard, Text} from "react-native";
 import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import HiddenText from "./HiddenText";
 import {useState} from "react";
@@ -21,14 +21,14 @@ export function AccountDetailInfoComponent(props) {
     return (
         <View style={{flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
             <View style={{flex: 2}}>
-                <ThemedText>{props.head}</ThemedText>
+                <Text style={{color: props.theme.text}}>{props.head}</Text>
             </View>
             <View style={{flex: 4}}>
                 {
                     props.head.toLowerCase() === "password" ?
-                        <HiddenText text={props.info} />
+                        <HiddenText color={props.theme.text} text={props.info} />
                     :
-                        <ThemedText>{props.info}</ThemedText>
+                        <Text style={{color: props.theme.text}}>{props.info}</Text>
                 }
             </View>
             <View>

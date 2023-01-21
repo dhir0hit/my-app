@@ -1,8 +1,10 @@
 import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
-import {Image, StyleSheet, View} from "react-native";
+import {Image, StyleSheet, View, Text} from "react-native";
 import {Component} from "react";
+import Settings from "../service/Settings";
+import Loading from "./Loading";
 
-
+const FontHexColor = '66';
 class NavChips extends Component {
     constructor(props) {
         super(props);
@@ -17,6 +19,7 @@ class NavChips extends Component {
 
         console.log(this.props.accountService.List);
         this.update = this.update.bind(this)
+
     }
 
     update = () => {
@@ -32,9 +35,9 @@ class NavChips extends Component {
                     page = "Password-Manager-List"
                 }
                 this.props.navigation.navigate(page, {accountService: this.props.accountService, Update: this.update});
-            }} style={{...styles.navChip, ...this.props.style}}>
+            }} style={{...styles.navChip, ...this.props.style, backgroundColor: this.props.theme.secondary+FontHexColor}}>
                 <ThemedAntDesign size={34} name={this.iconName}/>
-                <ThemedText style={{...styles.navChips_text}}>{this.props.pageName}</ThemedText>
+                <Text style={{...styles.navChips_text, color: this.props.theme.text}}>{this.props.pageName}</Text>
             </ThemedButton>
         )
     }
@@ -45,7 +48,6 @@ const styles = StyleSheet.create({
         margin: 5,
         width: 250,
         height: 100,
-        backgroundColor: "rgba(255,255,255,0.18)",
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-evenly",

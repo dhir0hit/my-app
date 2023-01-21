@@ -14,7 +14,12 @@ import {createNativeStackNavigator} from "@react-navigation/native-stack";
 * */
 import Profile from "./src/pages/Profile";
 import Home from "./src/pages/Home";
-import Settings from "./src/pages/Settings";
+
+/*
+* Settings Imports
+* */
+import Settings from "./src/pages/Settings/Settings";
+import PasswordManagerSettings from "./src/pages/Settings/PasswordManagerSettings";
 
 /*
 * Password Manager Imports
@@ -89,6 +94,11 @@ export default class App extends Component {
             <Stack.Screen
                 name={"Settings"}
                 component={Settings}
+                options={{title: 'Settings'}}
+            />
+            <Stack.Screen
+                name={"Settings-Password-Manager"}
+                component={PasswordManagerSettings}
                 options={{title: 'Settings'}}
             />
 

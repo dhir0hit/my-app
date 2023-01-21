@@ -74,6 +74,7 @@ export function ThemedText(props) {
 /**
  * Function returns original node with theme color on it
  * */
+/*
 export function ThemedView(props) {
     // getting current color scheme
     let scheme = Appearance.getColorScheme();
@@ -82,10 +83,10 @@ export function ThemedView(props) {
     const [colorScheme, setColorScheme] = useState(scheme);
     const [backgroundColor, setBackgroundColor] = useState("#fff")
 
-    /*
+    /!*
     * Function to change current theme according to system theme
     * Changes colorScheme and backgroundColor
-    * */
+    * *!/
     const changeTheme = () => {
         let scheme = Appearance.getColorScheme();
 
@@ -115,14 +116,46 @@ export function ThemedView(props) {
     // adding changeTheme function to a listener
     Appearance.addChangeListener(changeTheme);
 
-    /*
+    /!*
     * Returning original node with children, styles of custom node
     * with background color of theme
-    * */
+    * *!/
     return (
         <View style={{ ...props.style, backgroundColor: backgroundColor}} >{props.children}</View>
     )
 }
+*/
+
+/*
+export function ThemedView(props) {
+    // getting current color scheme
+    let scheme = Appearance.getColorScheme();
+
+    // using state to declare textColor and color scheme
+    const [colorScheme, setColorScheme] = useState(scheme);
+    const [backgroundColor, setBackgroundColor] = useState("#fff")
+
+    useEffect(() => {
+        // console.log(props.theme);
+    })
+
+    if (props.theme !== undefined) {
+        if (props.colorScheme !== undefined
+            || props.colorScheme === 'background') {
+            setBackgroundColor(() => props.theme['background'])
+        }
+    }
+
+    /!*
+    * Returning original node with children, styles of custom node
+    * with background color of theme
+    * *!/
+    return (
+        <View style={{ ...props.style, backgroundColor: backgroundColor}} >{props.children}</View>
+    )
+}
+*/
+
 
 export function ThemedButton(props) {
     // getting current color scheme
@@ -230,7 +263,8 @@ export function ThemedAntDesign(props) {// getting current color scheme
                     "dropbox", "gitlab", "skype", "youtube", "wechat", "twitter", "html",
                     "codesandbox", "dribbble", "wifi", 'star', 'copy1', 'eyeo', 'eye', 'setting',
                     'sync', 'plus', 'bars', 'clockcircleo', 'exclamationcircle', 'warning', 'left',
-                    'scan1', 'staro', 'close', 'edit', 'delete', 'loading2', 'check'
+                    'scan1', 'staro', 'close', 'edit', 'delete', 'loading2', 'check', 'unlock',
+                    'right', 'exclamationcircle'
                 ];
 
                 let accountIcon = ""

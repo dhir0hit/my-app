@@ -1,204 +1,323 @@
-import React, {useRef, useState} from "react";
-import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
+// importing built in components
+import React, {useEffect, useRef, useState} from "react";
 import {StatusBar} from "expo-status-bar";
-import {Pressable, ScrollView, StyleSheet, View} from "react-native";
+import {Pressable, ScrollView, StyleSheet, View, Text} from "react-native";
+
+// Importing third party components
 import Slider from '@react-native-community/slider';
 import {LinearGradient} from "expo-linear-gradient";
 
+// Importing custom components
+import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
+import {default as SettingService, SetFontSize} from "../../service/Settings";
+import Loading from "../../components/Loading";
+
+const Themes = {
+  light: [
+      {text: "#343434", background: "#e5e5e5",primary: "", secondary: "#3A86FF", highlight: "#FFD60A"},
+      {text: "#343434", background: "#e5e5e5",primary: "", secondary: "#cbf3f0", highlight: "#ffbf69"},
+      {text: "#343434", background: "#feeafa",primary: "", secondary: "#dee2ff", highlight: "#829aaf"},
+      {text: "#343434", background: "#dad7cd",primary: "", secondary: "#588157", highlight: "#63937b"},
+  ],
+  dark: [
+      {text: "#fffcf2", background: "#000814",primary: "", secondary: "#003566", highlight: "#dca800"},
+      {text: "#fffcf2", background: "#252422",primary: "", secondary: "#403d39", highlight: "#d35322"},
+      {text: "#fffcf2", background: "#03071e",primary: "", secondary: "#5b010b", highlight: "#faa307"},
+      {text: "#ede0ff", background: "#312244",primary: "", secondary: "#1b3a4b", highlight: "#4d194d"},
+  ],
+  custom: [
+      {text: "#fffcf2", background: "#000814",primary: "", secondary: "#003566", highlight: "#dca800"},
+  ]
+}
+
 /*TODO: CREATE THEME CHANGER*/
+/*TODO: Make button for gradient or solid background*/
 export default function Settings(props) {
+  const [isReady, setReady] = useState(0);
+  const [settings, setSettings] = useState(
+      {
+        username: "",
+        pin: "",
+        fontSize: 10,
+        theme: {
+          text: "",
+          background: "",
+          primary: "",
+          secondary: "",
+          highlight: "",
+        }
+      }
+  );
+  const [isShowTheme, setShowTheme] = useState(0)
 
-  const [fontSize, SetFontSize] = useState(0);
 
-  return (
-      <ThemedView style={{flex: 1}}>
-        <View style={{...styles.TopBar, marginTop: 45, marginBottom: 5}}>
-          <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
-            <Pressable
-                onPress={() => {props.navigation.goBack()}}
-                style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
-            >
-              <ThemedAntDesign name={"left"} size={24} color={"white"} />
-            </Pressable>
+  /*
+  * Importing settings from local storage
+  * Using local service
+  * */
+  SettingService()
+      .then((value) => {
+        let result = JSON.parse(value);
+
+        settings['username'] = result['username'];
+        settings['pin'] = result['pin'];
+        settings['fontSize'] = result['fontSize'];
+        settings['theme'] = result['theme'];
+
+        setSettings(settings);
+        // console.log(result['pin'])
+        setReady(1);
+      })
+  ;
+
+  const changeFontSize = () => {
+    SetFontSize(settings.fontSize)
+        .then(() => {
+          /*TODO: show error*/
+        })
+  }
+
+  const ChangeTheme = (theme) => {
+    let temp = {
+      username: settings.username,
+      pin: settings.pin,
+      fontSize: settings.fontSize,
+      theme: theme
+    };
+    setSettings(temp);
+  }
+
+
+  if (isReady) {
+    return (
+        <View style={{flex: 1}}>
+          <LinearGradient
+              style={{flex: 1}}
+              start={{x: 0, y: 0.5}}
+              end={{x: 1, y: 1}}
+              colors={[settings.theme.background, settings.theme.secondary]}
+          >
+          <View style={{...styles.TopBar, marginTop: 45, marginBottom: 5}}>
+            <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
+              <Pressable
+                  onPress={() => {
+                    props.navigation.goBack()
+                  }}
+                  style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
+              >
+                <ThemedAntDesign name={"left"} size={24} color={"white"}/>
+              </Pressable>
+            </View>
+            <Text style={{color: settings.theme.text}}>Settings</Text>
           </View>
-          <ThemedText>Settings</ThemedText>
-        </View>
-        <ScrollView>
-        <StatusBar style="auto"/>
+          <ScrollView>
+            <StatusBar style="auto"/>
 
-        <View>
-          <View style={styles.container}>
-            <ThemedText style={styles.heading}>General Settings</ThemedText>
-            <View style={styles.subContainer}>
-              <ThemedText style={styles.normalText}>Font Size: {fontSize}</ThemedText>
-              <View style={{marginVertical: 5}}>
-                <ThemedText
-                    style={{fontSize: fontSize,
-                      height: 80,
-                      backgroundColor: "rgba(255,255,255,0.1)",
-                      padding: 4}}
-                >The quick brown fox jumps over the lazy dog</ThemedText>
-                <View style={styles.SliderContainer}>
-                  <ThemedText>10</ThemedText>
-                  <Slider
-                      style={{width: "92%", height: 40}}
-                      minimumValue={10}
-                      maximumValue={30}
-                      minimumTrackTintColor="#FFFFFF"
-                      maximumTrackTintColor="#000000"
-                      value={15}
-                      onValueChange={(value)=>{SetFontSize(Math.round(parseFloat(value) * 100) / 100)}}
-                  />
-                  <ThemedText>30</ThemedText>
+            <View>
+              <View style={styles.container}>
+                <Text style={{...styles.heading, color: settings.theme.text}}>General Settings</Text>
+                <View style={styles.subContainer}>
+                  <Text style={{...styles.normalText, color: settings.theme.text}}>Font Size: {settings['fontSize']}</Text>
+                  <View style={{marginVertical: 5}}>
+                    <Text
+                        style={{
+                          fontSize: parseFloat(settings.fontSize),
+                          height: 80,
+                          color: settings.theme.text,
+                          backgroundColor: "rgba(255,255,255,0.1)",
+                          padding: 4
+                        }}
+                    >The quick brown fox jumps over the lazy dog</Text>
+                    <View style={styles.SliderContainer}>
+                      <Text style={{color: settings.theme.text}}>10</Text>
+                      <Slider
+                          style={{width: "92%", height: 40}}
+                          minimumValue={10}
+                          maximumValue={30}
+                          minimumTrackTintColor="#FFFFFF"
+                          maximumTrackTintColor="#000000"
+                          defaultValue={parseFloat(settings.fontSize)}
+                          onValueChange={(value) => {
+                            // had to create whole new variable so new object is created
+                            let temp = {
+                              username: settings.username,
+                              pin: settings.pin,
+                              fontSize: Math.round(parseFloat(value) * 100) / 100,
+                              theme: settings.theme
+                            };
+                            setSettings(temp);
+                          }}
+                      />
+                      <Text style={{color: settings.theme.text}}>30</Text>
+                    </View>
+
+                    <ThemedButton
+                        style={{padding: 10,
+                          backgroundColor: settings.theme.highlight+'90',
+                          fontWeight: 900,
+                          display: "flex",
+                          flexDirection: "row-reverse",
+                          justifyContent: "center",
+                          alignItems: "center"}}
+                    >
+                      <Text style={{color: settings.theme.text, paddingLeft: 10}}>Change Font Size</Text>
+                      <ThemedAntDesign style={{color: settings.theme.text}} name={'check'}/>
+                    </ThemedButton>
+
+                  </View>
+                  <Text style={{...styles.heading, color: settings.theme.text}}>Theme</Text>
+
+
+                  <View style={{marginVertical: 5}}>
+                    <View style={{
+                      display: "flex",
+                      flexDirection: "row",
+                      justifyContent: "space-around"
+                    }}>
+                      <ThemedButton
+                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          onPress={()=> {setShowTheme(()=>"light")}}
+                      >
+                        <Text style={{color: settings.theme.text}}>Light</Text>
+                      </ThemedButton>
+                      <ThemedButton
+                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          onPress={() => {setShowTheme(()=>"dark")}}
+                      >
+                        <Text style={{color: settings.theme.text}}>Dark</Text>
+                      </ThemedButton>
+
+                      <ThemedButton
+                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          onPress={() => {setShowTheme(()=>"custom")}}
+                      >
+                        <Text style={{color: settings.theme.text}}>Custom</Text>
+                      </ThemedButton>
+                    </View>
+                    {
+                      isShowTheme
+                          ? <>
+                            {
+                              isShowTheme === "dark"
+                                  ? <ThemesList type={'dark'} ChangeTheme={ChangeTheme}/>
+                                  :
+                                  isShowTheme === "light"
+                                      ? <ThemesList type={'light'} ChangeTheme={ChangeTheme}/>
+                                      : <ThemesList type={'custom'} ChangeTheme={ChangeTheme}/>
+                            }
+                          </>
+                          : ""
+                    }
+                  </View>
                 </View>
               </View>
-              <ThemedText style={styles.normalText}>Theme</ThemedText>
 
-              <View style={{marginVertical: 5}}>
+              <ThemedButton style={{
+                paddingVertical: 12,
+                paddingHorizontal: 20,
+                backgroundColor: settings.theme.secondary+'90',
+                marginTop: 5,
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center"
+              }}>
+                <ThemedAntDesign name={'user'}/>
+                <Text style={{...styles.heading, marginLeft: 10, color: settings.theme.text}}>Account</Text>
+              </ThemedButton>
 
-                <ThemedButton theme={'transparent'} style={{...styles.themeContainer}}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#ffffff', '#3A86FF', '#ffd60a']}
-                  ></LinearGradient>*/}
-                    <View style={{...styles.themeItem, backgroundColor: "#ffffff"}}></View>
-                    <View style={{...styles.themeItem, backgroundColor: "#3A86FF"}}></View>
-                    <View style={{...styles.themeItem, backgroundColor: "#ffd60a"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#ffffff', '#cbf3f0', '#ffbf69']}
-                  ></LinearGradient>*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#ffffff"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#cbf3f0"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#ffbf69"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#feeafa', '#dee2ff', '#8e9aaf']}
-                  ></LinearGradient>*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#feeafa"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#dee2ff"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#8e9aaf"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#dad7cd', '#588157', '#344e41']}
-                  ></LinearGradient>*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#dad7cd"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#588157"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#344e41"}}></View>
-                </ThemedButton>
+              <ThemedButton
+                  style={{
+                    paddingVertical: 12,
+                    paddingHorizontal: 20,
+                    backgroundColor: settings.theme.secondary+'90',
+                    marginTop: 5,
+                    display: "flex",
+                    flexDirection: "row",
+                    alignItems: "center"
+                  }}
+                  onPress={() => {
+                    props.navigation.navigate('Settings-Password-Manager')
+                  }}>
+                <ThemedAntDesign name={'unlock'}/>
+                <Text style={{...styles.heading, marginLeft: 10, color: settings.theme.text}}>Password Manager</Text>
+              </ThemedButton>
 
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#000814', '#003566', '#ffc300']}
-                  ></LinearGradient>*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#000814"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#003566"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#ffc300"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#252422', '#403d39', '#eb5e28']}
-                  ></LinearGradient>*/}
-                  {/*#fffcf2*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#252422"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#403d39"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#eb5e28"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#03071e', '#9d0208', '#faa307']}
-                  ></LinearGradient>*/}
-                  {/*#fffcf2*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#03071e"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#9d0208"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#faa307"}}></View>
-                </ThemedButton>
-                <ThemedButton theme={'transparent'} style={styles.themeContainer}>
-                  {/*<LinearGradient
-                      style={{height: 50, width: "100%"}}
-                      start={{x: 0, y: 0.5}}
-                      end={{x: 1, y: 0.5}}
-                      colors={['#312244', '#1b3a4b', '#4d194d']}
-                  ></LinearGradient>*/}
-                  {/*#fffcf2*/}
-                  <View style={{...styles.themeItem, backgroundColor: "#312244"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#1b3a4b"}}></View>
-                  <View style={{...styles.themeItem, backgroundColor: "#4d194d"}}></View>
-                </ThemedButton>
+              <View style={{...styles.container, marginTop: 5}}>
+                <Text style={{...styles.heading, color: settings.theme.text}}>Support</Text>
 
-
-
-
+                <View style={styles.subContainer}>
+                  <ThemedButton theme={'transparent'} style={styles.navigationButton}>
+                    <Text style={{color: settings.theme.text}}>About</Text>
+                    <ThemedAntDesign name={'right'}/>
+                  </ThemedButton>
+                  <ThemedButton theme={'transparent'} style={styles.navigationButton}>
+                    <Text style={{color: settings.theme.text}}>Make Requests</Text>
+                    <ThemedAntDesign name={'right'}/>
+                  </ThemedButton>
+                  <ThemedButton theme={'transparent'} style={styles.navigationButton}>
+                    <Text style={{color: settings.theme.text}}>Help/FAQ</Text>
+                    <ThemedAntDesign name={'right'}/>
+                  </ThemedButton>
+                  <ThemedButton theme={'transparent'} style={styles.navigationButton}>
+                    <Text style={{color: settings.theme.text}}>Report an Issue</Text>
+                    <ThemedAntDesign name={'right'}/>
+                  </ThemedButton>
+                  <ThemedButton theme={'transparent'} style={styles.navigationButton}>
+                    <Text style={{color: settings.theme.text}}>Contact Us</Text>
+                    <ThemedAntDesign name={'right'}/>
+                  </ThemedButton>
+                </View>
               </View>
             </View>
-          </View>
-
-          <ThemedButton style={{...styles.container, marginTop: 5, display: "flex", flexDirection: "row", alignItems: "center"}}>
-            <ThemedAntDesign name={'user'} />
-            <ThemedText style={styles.heading}>Account</ThemedText>
-          </ThemedButton>
-
-          <ThemedButton
-              style={{...styles.container, marginTop: 5,display: "flex", flexDirection: "row", alignItems: "center"}}
-              onPress={() => {props.navigation.navigate('Settings-Password-Manager')}}
-          >
-            <ThemedAntDesign name={'unlock'} />
-            <ThemedText style={styles.heading}>Password Manager</ThemedText>
-          </ThemedButton>
-
-          <View style={{...styles.container, marginTop: 5}}>
-            <ThemedText style={styles.heading}>Support</ThemedText>
-
-            <View style={styles.subContainer}>
-              <ThemedButton theme={'transparent'} style={styles.navigationButton}>
-                <ThemedText>About</ThemedText>
-                <ThemedAntDesign name={'right'}/>
-              </ThemedButton>
-              <ThemedButton theme={'transparent'} style={styles.navigationButton}>
-                <ThemedText>Make Requests</ThemedText>
-                <ThemedAntDesign name={'right'}/>
-              </ThemedButton>
-              <ThemedButton theme={'transparent'} style={styles.navigationButton}>
-                <ThemedText>Help/FAQ</ThemedText>
-                <ThemedAntDesign name={'right'}/>
-              </ThemedButton>
-              <ThemedButton theme={'transparent'} style={styles.navigationButton}>
-                <ThemedText>Report an Issue</ThemedText>
-                <ThemedAntDesign name={'right'}/>
-              </ThemedButton>
-              <ThemedButton theme={'transparent'} style={styles.navigationButton}>
-                <ThemedText>Contact Us</ThemedText>
-                <ThemedAntDesign name={'right'}/>
-              </ThemedButton>
-            </View>
-          </View>
+          </ScrollView>
+          </LinearGradient>
         </View>
-        </ScrollView>
-      </ThemedView>
-  )
+    )
+  } else {
+    return <Loading />
+  }
+}
+
+const ThemesList = (props) => {
+  let _List = [];
+
+  for (const theme of Themes[props.type]) {
+    _List.push(
+        <ThemedButton
+            key={props.type + Themes[props.type].indexOf(theme)}
+            theme={'transparent'}
+            onPress={() => props.ChangeTheme(theme)}
+        >
+
+          <LinearGradient
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                paddingVertical: 15,
+                marginTop: 5,
+              }}
+              start={{x: 0, y: 1}}
+              end={{x: 1, y: 1}}
+              colors={[theme.background, theme.secondary]}
+          >
+            {/*primary button*/}
+            <View style={{backgroundColor: theme.highlight, paddingHorizontal: 20, paddingVertical: 10, borderRadius: 4}}>
+              <Text style={{color: theme.text}}>Button</Text>
+            </View>
+            {/*secondary button*/}
+            <View style={{backgroundColor: theme.secondary, marginHorizontal: 20 ,paddingHorizontal: 20, paddingVertical: 10, borderRadius: 2}}>
+              <Text style={{color: theme.text}}>Secondary</Text>
+            </View>
+            {/*Text*/}
+            <Text style={{color: theme.text}}>Text</Text>
+            <ThemedAntDesign style={{color: theme.text, marginLeft: 20}} name={'exclamationcircle'} />
+          </LinearGradient>
+        </ThemedButton>
+    )
+  }
+  return _List;
 }
 
 const styles = StyleSheet.create({
@@ -210,8 +329,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   container: {
-    marginHorizontal: 10,
-    backgroundColor: "rgba(134,134,134,0.3)",
+    // marginHorizontal: 10,
+    // backgroundColor: "rgba(134,134,134,0.3)",
     padding: 10,
   },
   subContainer: {

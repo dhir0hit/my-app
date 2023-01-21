@@ -1,13 +1,46 @@
 import {Component, useState} from "react";
 import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
-import {Clipboard, StyleSheet, View} from "react-native";
+import {Clipboard, StyleSheet, View, Text} from "react-native";
 import GenerateString from "../../utils/GenerateString";
+import Settings from "../../service/Settings";
+import {LinearGradient} from "expo-linear-gradient";
 
-
+const FontHexColor = '66';
 const PasswordManagerGeneratePassword = (props) => {
     const Generator = new GenerateString();
     const [password, setPassword] = useState(Generator.Password);
     const [copyButton, setCopyButton] = useState("copy1")
+
+    const [isReady, setReady] = useState(0);
+    const [settings, setSettings] = useState(
+        {
+          username: "",
+          pin: "",
+          fontSize: 10,
+          theme: {
+            text: "",
+            background: "",
+            primary: "",
+            secondary: "",
+            highlight: "",
+          }
+        }
+    );
+
+    Settings()
+        .then((value) => {
+          let result = JSON.parse(value);
+
+          settings['username'] = result['username'];
+          settings['pin'] = result['pin'];
+          settings['fontSize'] = result['fontSize'];
+          settings['theme'] = result['theme'];
+
+          setSettings(settings);
+          // console.log(result['pin'])
+          setReady(1);
+        })
+    ;
 
     const copyToClipboard = () => {
       Clipboard.setString(password);
@@ -22,21 +55,38 @@ const PasswordManagerGeneratePassword = (props) => {
 
 
     return (
-        <ThemedView style={styles.mainContainer}>
-            <ThemedText style={{fontSize: 15, marginBottom: 30}}>Generate New Password</ThemedText>
+        <View>
+          <LinearGradient
+              style={{...styles.mainContainer, paddingTop: 40}}
+              start={{x: 0, y: 0.5}}
+              end={{x: 1, y: 1}}
+              colors={[settings.theme.background, settings.theme.secondary]}
+          >
+            <Text style={{fontSize: 15, marginBottom: 30, color: settings.theme.text}}>Generate New Password</Text>
             <View style={{display: "flex", flexDirection: "row", marginVertical: 20}}>
-                <ThemedText style={{fontSize: 20, width: 210, textAlign: "center"}}>{password}</ThemedText>
+                <Text style={{fontSize: 20, width: 210, textAlign: "center", color: settings.theme.text}}>{password}</Text>
                 <ThemedButton onPress={copyToClipboard} style={{marginLeft: 10}} theme={'transparent'} >
-                    <ThemedAntDesign name={copyButton} />
+                    <ThemedAntDesign color={settings.theme.text} name={copyButton} />
                 </ThemedButton>
             </View>
             <ThemedButton
                 onPress={() => {setPassword(()=>Generator.Password)}}
-                style={{display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center", paddingVertical: 10, width: 200, backgroundColor: 'gray', borderRadius: 5}}>
-                <ThemedAntDesign name={'sync'} />
-                <ThemedText style={{paddingLeft: 10, fontSize: 15}}>Generate</ThemedText>
+                style={
+              {
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                paddingVertical: 10,
+                width: 200,
+                backgroundColor: settings.theme.highlight + FontHexColor,
+                borderRadius: 5
+              }}>
+                <ThemedAntDesign color={settings.theme.text} name={'sync'} />
+                <Text style={{paddingLeft: 10, fontSize: 15, color: settings.theme.text}}>Generate</Text>
             </ThemedButton>
-        </ThemedView>
+          </LinearGradient>
+        </View>
     )
 }
 /*
@@ -59,7 +109,9 @@ export default PasswordManagerGeneratePassword;
 
 const styles = StyleSheet.create({
     mainContainer: {
-        flex: 1,
+        width: "100%",
+        height: "100%",
+        display: "flex",
         justifyContent: "center",
         alignItems: "center"
     }

@@ -20,15 +20,15 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SettingsStorageJSONFormat = JSON.stringify(
     {
-      username: 'user',
-      pin: '1234',
-      fontSize: '15',
+      username: '',
+      pin: '',
+      fontSize: 10,
       theme: {
-        text: "#b7b7b7",
-        background: "#252422",
+        text: "#ede0ff",
+        background: "#312244",
         primary: "",
-        secondary: "#403d39",
-        highlight: "#eb5e28",
+        secondary: "#1b3a4b",
+        highlight: "#4d194d",
       }
     }
 )
@@ -45,6 +45,7 @@ async function Settings() {
             'settings',
             SettingsStorageJSONFormat
         )
+        return SettingsStorageJSONFormat;
       } catch (e) {
         return 0;
       }

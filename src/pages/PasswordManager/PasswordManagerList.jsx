@@ -1,43 +1,98 @@
-import {Component} from "react";
+import {Component, useState} from "react";
 import {ThemedAntDesign, ThemedText, ThemedView} from "../../components/ThemedComponents";
-import {Pressable, ScrollView, StyleSheet, View} from "react-native";
+import {Pressable, ScrollView, StyleSheet, View, Text} from "react-native";
 import {AccountElement} from "../../components/AccountElement";
 import {StatusBar} from "expo-status-bar";
 import Accounts from "../../service/Accounts";
+import Loading from "../../components/Loading";
+import {LinearGradient} from "expo-linear-gradient";
+import Settings from "../../service/Settings";
 
+const FontHexColor = '66';
 export default function PasswordManagerList(props) {
+  const [isReady, setReady] = useState(0);
+  const [settings, setSettings] = useState(
+      {
+        username: "",
+        pin: "",
+        fontSize: 10,
+        theme: {
+          text: "",
+          background: "",
+          primary: "",
+          secondary: "",
+          highlight: "",
+        }
+      });
 
-    const routeName = props.route.name.split('-');
+  /*
+  * Importing settings from local storage
+  * Using local service
+  * */
+  Settings()
+      .then((value) => {
+        let result = JSON.parse(value);
+
+        settings['username'] = result['username'];
+        settings['pin'] = result['pin'];
+        settings['fontSize'] = result['fontSize'];
+        settings['theme'] = result['theme'];
+
+        setSettings(settings);
+        // console.log(result['pin'])
+        setReady(1);
+      })
+  ;
+
+
+  const routeName = props.route.name.split('-');
+
+  if (isReady) {
     return (
-        <ThemedView style={styles.container}>
-            <View style={{display: "flex",
-                flexDirection:"row",
-                alignItems: "center",
-                justifyContent: "space-between",
-                paddingHorizontal: 5}}>
-                <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
-                    <Pressable
-                        onPress={() => {props.navigation.goBack()}}
-                        style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
-                    >
-                        <ThemedAntDesign name={"left"} size={24} color={"white"} />
-                    </Pressable>
-                </View>
-                <ThemedText>{props.route.params.filter}</ThemedText>
+        <View style={{flex: 1}}>
+          <LinearGradient
+              style={styles.container}
+              start={{x: 0, y: 0.5}}
+              end={{x: 1, y: 1}}
+              colors={[settings.theme.background, settings.theme.secondary]}
+          >
+          <View style={{
+            display: "flex",
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            paddingHorizontal: 5
+          }}>
+            <View style={{display: "flex", alignItems: "flex-start", overflow: "visible"}}>
+              <Pressable
+                  onPress={() => {
+                    props.navigation.goBack()
+                  }}
+                  style={{backgroundColor: settings.theme.secondary+FontHexColor, padding: 10}}
+              >
+                <ThemedAntDesign name={"left"} size={24} color={"white"}/>
+              </Pressable>
             </View>
-            <View style={{flex: 1}}>
-                <ScrollView >
-                    <AccountList
-                        filter={props.route.params.filter}
-                        accounts={props.route.params.accounts}
-                        accountService={props.route.params.accountService}
-                        route={props.route}
-                        navigation={props.navigation}/>
-                </ScrollView>
-            </View>
-            <StatusBar style={"auto"} />
-        </ThemedView>
+            <Text style={{color: settings.theme.text}}>{props.route.params.filter}</Text>
+          </View>
+          <View style={{flex: 1}}>
+            <ScrollView>
+              <AccountList
+                  theme={settings.theme}
+                  filter={props.route.params.filter}
+                  accounts={props.route.params.accounts}
+                  accountService={props.route.params.accountService}
+                  route={props.route}
+                  navigation={props.navigation}/>
+            </ScrollView>
+          </View>
+          <StatusBar style={"auto"}/>
+          </LinearGradient>
+        </View>
     )
+  } else {
+    return <Loading />
+  }
 }
 
 function AccountList(props) {
@@ -67,12 +122,12 @@ function AccountList(props) {
             // "Goolo";
 
             _List.push(
-                <ThemedText
+                <Text
                     key={listElement}
-                    style={{opacity:0.6, backgroundColor: "rgba(255,255,255,0.2)",
+                    style={{opacity:0.6, backgroundColor: "rgba(255,255,255,0.2)", color: props.theme.text,
                         paddingHorizontal: 10, paddingVertical: 5, fontSize: 20, marginVertical: 5}}>
                     {listElement}
-                </ThemedText>
+                </Text>
             )
             for (let i = 0; i < accounts[listElement].length; i++) {
                 _List.push(
@@ -87,6 +142,7 @@ function AccountList(props) {
                                     accountService: props.route.params.accountService
                                 })
                         }}
+                        theme={props.theme}
                         Platform={accounts[listElement][i].Platform}
                         UserName={accounts[listElement][i].Username}
                         favorite={accounts[listElement][i].Favorite}
@@ -109,6 +165,7 @@ function AccountList(props) {
                                 update: props.route.params.update
                             })
                     }}
+                    theme={props.theme}
                     Platform={accounts[i].Platform}
                     UserName={accounts[i].Username}
                     favorite={accounts[i].Favorite}

@@ -1,17 +1,57 @@
 import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, View, Text} from "react-native";
 import {Component, useState} from "react";
 import Accounts from "../../service/Accounts";
+import Settings from "../../service/Settings";
+import Loading from "../../components/Loading";
+import {LinearGradient} from "expo-linear-gradient";
 
 export default class PasswordManagerLanding extends Component {
     constructor(props) {
         super(props);
         // this.pinList = []
         this.state = {
-            pinList: []
+            pinList: [],
+            isReady: 0,
+            settings: {
+                username: "",
+                pin: "",
+                fontSize: 10,
+                theme: {
+                    text: "",
+                    background: "",
+                    primary: "",
+                    secondary: "",
+                    highlight: "",
+                }
+            },
         }
         this.setPin = this.setPin.bind(this)
+
+        Settings()
+            .then((value) => {
+                let result = JSON.parse(value);
+
+                this.setState(
+                    {
+                        settings: {
+                            username: result['username'],
+                            pin     : result['pin'],
+                            fontSize: result['fontSize'],
+                            theme   : result['theme'],
+                        }
+                    }
+                )
+                this.setState(
+                    {
+                        isReady: 1
+                    }
+                )
+                // console.log(result['pin'])
+            })
+        ;
     }
+
 
     setPin(value) {
         let _temp_pin_ = this.state["pinList"];
@@ -55,71 +95,111 @@ export default class PasswordManagerLanding extends Component {
     }
 
     render() {
-        const { pinList } = this.state;
-        return (
-            <ThemedView style={styles.container}>
-                <View style={{flex: 2, justifyContent: "flex-end"}}>
-                    <ThemedText>Enter The Pin</ThemedText>
-                    <View style={{...styles.flexRow}}>
-                        <ThemedText style={{...styles.titleStyle}}>{pinList[0] === undefined ? "_" : pinList[0]}</ThemedText>
-                        <ThemedText style={{...styles.titleStyle}}>{pinList[1] === undefined ? "_" : pinList[1]}</ThemedText>
-                        <ThemedText style={{...styles.titleStyle}}>{pinList[2] === undefined ? "_" : pinList[2]}</ThemedText>
-                        <ThemedText style={{...styles.titleStyle}}>{pinList[3] === undefined ? "_" : pinList[3]}</ThemedText>
+        const { pinList, isReady, settings } = this.state;
+
+        if (isReady) {
+            return (
+                <LinearGradient
+                    style={{flex: 1}}
+                    start={{x: 0, y: 0.5}}
+                    end={{x: 1, y: 1}}
+                    colors={[settings.theme.background, settings.theme.secondary]}
+                >
+                <View style={{...styles.container}}>
+                    <View style={{flex: 2, justifyContent: "flex-end"}}>
+                        <Text style={{color: settings.theme.text}}>Enter The Pin</Text>
+                        <View style={{...styles.flexRow}}>
+                            <Text
+                                style={{...styles.titleStyle, color: settings.theme.text}}>{pinList[0] === undefined ? "_" : pinList[0]}</Text>
+                            <Text
+                                style={{...styles.titleStyle, color: settings.theme.text}}>{pinList[1] === undefined ? "_" : pinList[1]}</Text>
+                            <Text
+                                style={{...styles.titleStyle, color: settings.theme.text}}>{pinList[2] === undefined ? "_" : pinList[2]}</Text>
+                            <Text
+                                style={{...styles.titleStyle, color: settings.theme.text}}>{pinList[3] === undefined ? "_" : pinList[3]}</Text>
+                        </View>
+                        {/*<ThemedText>ERROR</ThemedText>*/}
                     </View>
-                    {/*<ThemedText>ERROR</ThemedText>*/}
+                    <View style={{flex: 3, padding: 2,}}>
+                        <View style={{...styles.flexRow}}>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("1")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>1</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("2")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>2</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("3")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>3</Text>
+                            </ThemedButton>
+                        </View>
+                        <View style={{...styles.flexRow}}>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("4")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>4</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("5")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>5</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("6")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>6</Text>
+                            </ThemedButton>
+                        </View>
+                        <View style={{...styles.flexRow}}>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("7")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>7</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("8")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>8</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("9")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>9</Text>
+                            </ThemedButton>
+                        </View>
+                        <View style={{...styles.flexRow}}>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("x")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>
+                                    <ThemedAntDesign name={'close'}/>
+                                </Text >
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("0")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>0</Text>
+                            </ThemedButton>
+                            <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
+                                this.setPin("/")
+                            }}>
+                                <Text style={{color: settings.theme.text}}>
+                                    <ThemedAntDesign name={'check'}/>
+                                </Text>
+                            </ThemedButton>
+                        </View>
+                    </View>
                 </View>
-                <View style={{flex: 3, padding: 2,}}>
-                    <View style={{...styles.flexRow}}>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {this.setPin("1")}}>
-                            <ThemedText theme={"highlight"}>1</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("2")}}>
-                            <ThemedText theme={"highlight"}>2</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("3")}}>
-                            <ThemedText theme={"highlight"}>3</ThemedText>
-                        </ThemedButton>
-                    </View>
-                    <View style={{...styles.flexRow}}>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("4")}}>
-                            <ThemedText theme={"highlight"}>4</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("5")}}>
-                            <ThemedText theme={"highlight"}>5</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("6")}}>
-                            <ThemedText theme={"highlight"}>6</ThemedText>
-                        </ThemedButton>
-                    </View>
-                    <View style={{...styles.flexRow}}>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("7")}}>
-                            <ThemedText theme={"highlight"}>7</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("8")}}>
-                            <ThemedText theme={"highlight"}>8</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("9")}}>
-                            <ThemedText theme={"highlight"}>9</ThemedText>
-                        </ThemedButton>
-                    </View>
-                    <View style={{...styles.flexRow}}>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("x")}}>
-                            <ThemedText theme={"highlight"}>
-                                <ThemedAntDesign name={'close'} />
-                            </ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("0")}}>
-                            <ThemedText theme={"highlight"}>0</ThemedText>
-                        </ThemedButton>
-                        <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}}  onPress={() => {this.setPin("/")}}>
-                            <ThemedText theme={"highlight"}>
-                                <ThemedAntDesign name={'check'} />
-                            </ThemedText>
-                        </ThemedButton>
-                    </View>
-                </View>
-            </ThemedView>
-        )
+                </LinearGradient>
+            )
+        } else {
+            return <Loading />
+        }
     }
 }
 

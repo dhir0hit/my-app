@@ -1,6 +1,6 @@
 // Inbuilt components
 import React, { useEffect, useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet, View, Text } from "react-native";
 
 // Importing custom components
 import {ThemedAntDesign, ThemedText, ThemedView} from "../../components/ThemedComponents";
@@ -8,6 +8,8 @@ import Loading from "../../components/Loading"; // Loading components
 import NavChips from "../../components/NavChips"
 import MenuItem from "../../components/MenuItem";
 import Accounts from "../../service/Accounts";
+import Settings from "../../service/Settings";
+import {LinearGradient} from "expo-linear-gradient";
 
 //TODO: replace accountService with props.route.param.accountService
 const PasswordManagerHome = (props) => {
@@ -28,6 +30,37 @@ const PasswordManagerHome = (props) => {
     StrengthProgressBarColor: ''
   })
 
+  const [isReady, setReady] = useState(0);
+  const [settings, setSettings] = useState(
+      {
+        username: "",
+        pin: "",
+        fontSize: 10,
+        theme: {
+          text: "",
+          background: "",
+          primary: "",
+          secondary: "",
+          highlight: "",
+        }
+      }
+  );
+
+  Settings()
+      .then((value) => {
+        let result = JSON.parse(value);
+
+        settings['username'] = result['username'];
+        settings['pin'] = result['pin'];
+        settings['fontSize'] = result['fontSize'];
+        settings['theme'] = result['theme'];
+
+        setSettings(settings);
+        // console.log(result['pin'])
+        setReady(1);
+      })
+  ;
+
   const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
@@ -47,9 +80,7 @@ const PasswordManagerHome = (props) => {
 
   useEffect(() => {
     Update();
-    },
-    [accountService.List.length]
-  )
+    }, [accountService.List.length])
 
     const Update = () => {
       console.log()
@@ -120,34 +151,40 @@ const PasswordManagerHome = (props) => {
       })
     }
 
-    if (appIsReady) {
+    if (appIsReady && isReady) {
         return (
-            <ThemedView style={{...styles.mainContainer, height: 50}}>
+            <View style={{...styles.mainContainer, height: 50, backgroundColor: settings.theme.background}}>
+              <LinearGradient
+                  style={{flex: 1}}
+                  start={{x: 0, y: 0.5}}
+                  end={{x: 1, y: 1}}
+                  colors={[settings.theme.background, settings.theme.secondary]}
+              >
                 <View style={{backgroundColor: "rgba(255,255,255,0.18)", borderRadius: 10, overflow: "hidden"}}>
                     <View style={{height: 50, width: `${AccountsInfo.OverallStrength}%`, backgroundColor: `${AccountsInfo.StrengthProgressBarColor()}`}}></View>
                 </View>
                 <View style={{
                     display: "flex", flexDirection: "row", justifyContent: "space-between",
-                    padding: 20, borderBottomWidth: 1, borderColor: '#fff', borderBottomLeftRadius: 10,
+                    padding: 20, borderBottomWidth: 1, borderColor: settings.theme.text, borderBottomLeftRadius: 10,
                     borderBottomRightRadius: 10
                 }}
                 >
                     <View>
-                        <ThemedText style={styles.textStyle}>Overall</ThemedText>
-                        <ThemedText style={styles.textStyle}>Strong</ThemedText>
-                        <ThemedText style={styles.textStyle}>Normal</ThemedText>
-                        <ThemedText style={styles.textStyle}>Weak</ThemedText>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>Overall</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>Strong</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>Normal</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>Weak</Text>
                     </View>
                     <View>
-                        <ThemedText style={styles.textStyle}>{AccountsInfo.OverallStrength}%</ThemedText>
-                        <ThemedText style={styles.textStyle}>{AccountsInfo.StrongAccounts}</ThemedText>
-                        <ThemedText style={styles.textStyle}>{AccountsInfo.NormalAccounts}</ThemedText>
-                        <ThemedText style={styles.textStyle}>{AccountsInfo.WeakAccounts}</ThemedText>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>{AccountsInfo.OverallStrength}%</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>{AccountsInfo.StrongAccounts}</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>{AccountsInfo.NormalAccounts}</Text>
+                        <Text style={{...styles.textStyle, color: settings.theme.text}}>{AccountsInfo.WeakAccounts}</Text>
                     </View>
                 </View>
               <View style={{display: connectedRemotely ? 'none' : 'flex', flexDirection: 'row', justifyContent: 'center', paddingTop: 5}}>
                 <ThemedAntDesign style={{color: 'orange'}} size={15} name={'warning'} />
-                <ThemedText style={{color: 'orange', textTransform: 'uppercase', paddingLeft: 5}}>Unable to connect with Server</ThemedText>
+                <Text style={{color: 'orange', textTransform: 'uppercase', paddingLeft: 5}}>Unable to connect with Server</Text>
               </View>
                 <ScrollView
                   refreshControl={
@@ -158,12 +195,14 @@ const PasswordManagerHome = (props) => {
                   }
                 >
                     <ScrollView style={{padding: 5}} horizontal={true}>
-                        <NavChips navigation={props.navigation}
+                        <NavChips theme={settings.theme}
+                                  navigation={props.navigation}
                                   accountService={props.route.params.accountService}
                                   pageName={'Generate Password'}
                                   Update={() => Update()}
                         />
-                        <NavChips navigation={props.navigation}
+                        <NavChips theme={settings.theme}
+                                  navigation={props.navigation}
                                   accountService={props.route.params.accountService}
                                   pageName={'Add Account'}
                                   Update={() => Update()}
@@ -171,36 +210,42 @@ const PasswordManagerHome = (props) => {
                     </ScrollView>
                     <View>
                         <MenuItem filter={"Total Accounts"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.TotalAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Favorite Accounts"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.FavoriteAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Recent Accounts"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.RecentAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Weak Accounts"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.WeakAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Missing Credentials"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.MissingCredentialAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
                                   Update={() => Update()}
                         />
                         <MenuItem filter={"Platform Filter"}
+                                  theme={settings.theme}
                                   number={AccountsInfo.PlatformFilterAccounts}
                                   accountService={props.route.params.accountService}
                                   navigation={props.navigation}
@@ -208,7 +253,8 @@ const PasswordManagerHome = (props) => {
                         />
                     </View>
                 </ScrollView>
-            </ThemedView>
+              </LinearGradient>
+            </View>
         )
     }
     else {

@@ -6,16 +6,31 @@ import {
     ThemedView
 }
     from "../../components/ThemedComponents";
-import {ScrollView, View, StyleSheet, Text} from "react-native";
+import {ScrollView, View, StyleSheet, Text, TextInput} from "react-native";
 import Account from "../../model/Account";
 import Accounts from "../../service/Accounts";
 import {Component} from "react";
+import Settings from "../../service/Settings";
 
+const FadeHexColor = "66";
 export default class PasswordManagerAddAccount extends Component{
     constructor(props) {
         super(props)
 
         this.state = {
+            isReady: 0,
+            settings: {
+                username: "",
+                pin: "",
+                fontSize: 10,
+                theme: {
+                    text: "",
+                    background: "",
+                    primary: "",
+                    secondary: "",
+                    highlight: "",
+                }
+            },
             Username: "",
             Password: "",
             Platform: "",
@@ -41,6 +56,28 @@ export default class PasswordManagerAddAccount extends Component{
 
 
         this.Submit = this.Submit.bind(this)
+        Settings()
+            .then((value) => {
+                let result = JSON.parse(value);
+
+                this.setState(
+                    {
+                        settings: {
+                            username: result['username'],
+                            pin     : result['pin'],
+                            fontSize: result['fontSize'],
+                            theme   : result['theme'],
+                        }
+                    }
+                )
+                this.setState(
+                    {
+                        isReady: 1
+                    }
+                )
+                // console.log(result['pin'])
+            })
+        ;
     }
 
     setUsernameError(value) {
@@ -160,7 +197,9 @@ export default class PasswordManagerAddAccount extends Component{
     }
 
     render() {
-        const {Username,
+        const {isReady,
+            settings,
+            Username,
             Password,
             Platform,
             Website,
@@ -171,36 +210,38 @@ export default class PasswordManagerAddAccount extends Component{
             PlatformError} = this.state;
 
         return (
-            <ThemedView style={{flex:1, paddingTop: 50}}>
+            <View style={{flex:1, paddingTop: 50, backgroundColor: settings.theme.background}}>
                 <View style={{padding: 5, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                     <ThemedButton
                         onPress={()=>{this.props.navigation.goBack()}}
-                        style={{backgroundColor: 'rgba(101,101,101,0.4)', padding: 10}}>
+                        style={{backgroundColor: settings.theme.secondary+FadeHexColor, padding: 10}}>
                         <ThemedAntDesign name={"left"} />
                     </ThemedButton>
-                    <ThemedText>Create New Account</ThemedText>
+                    <Text style={{color: settings.theme.text}}>Create New Account</Text>
                     <ThemedButton theme={"transparent"}>
-                        <ThemedAntDesign name={"scan1"} />
+                        <ThemedAntDesign color={settings.theme.text} name={"scan1"} />
                     </ThemedButton>
                 </View>
 
                 <ScrollView>
                     <View style={{marginHorizontal: 10}}>
                         <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#b60e0e"}}>{UsernameError}</Text>
-                            <ThemedText style={{...styles.labelFont}}>Username</ThemedText>
+                            <Text style={{...styles.labelFont, color: "#720000"}}>{UsernameError}</Text>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Username</Text>
                         </View>
-                        <ThemedTextInput
+                        <TextInput
+                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
                             onChangeText={(_username) => {this.setUsername(_username)}}
-                            placeholder={"username"}
+                            placeholder={"Username"}
                             autoComplete={"username"}
                         />
 
                         <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#b60e0e"}}>{PasswordError}</Text>
-                            <ThemedText style={{...styles.labelFont}}>Password</ThemedText>
+                            <Text style={{...styles.labelFont, color: "#720000"}}>{PasswordError}</Text>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Password</Text>
                         </View>
-                        <ThemedTextInput
+                        <TextInput
+                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
                             onChangeText={(_password) => {this.setPassword(_password)}}
                             placeholder={"password"}
                             autoComplete={"password"}
@@ -209,27 +250,30 @@ export default class PasswordManagerAddAccount extends Component{
                         />
 
                         <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#b60e0e"}}>{PlatformError}</Text>
-                            <ThemedText style={{...styles.labelFont}}>Platform</ThemedText>
+                            <Text style={{...styles.labelFont, color: "#720000"}}>{PlatformError}</Text>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Platform</Text>
                         </View>
-                        <ThemedTextInput
+                        <TextInput
+                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
                             onChangeText={(_platform) => {this.setPlatform(_platform)}}
                             placeholder={"ex. google, instagram"}
                         />
 
                         <View style={{...styles.label}}>
-                            <ThemedText style={{...styles.labelFont}}>Website</ThemedText>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Website</Text>
                         </View>
-                        <ThemedTextInput
+                        <TextInput
+                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
                             onChangeText={(_website) => {this.setWebsite(_website)}}
                             placeholder={"www.example.website.com"}
                             keyboardType={"url"}
                         />
 
                         <View style={{...styles.label}}>
-                            <ThemedText style={{...styles.labelFont}}>Additional Info</ThemedText>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Additional Info</Text>
                         </View>
-                        <ThemedTextInput
+                        <TextInput
+                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
                             onChangeText={(_additional_info) => {this.setAdditionalInfo(_additional_info)}}
                             placeholder={"info"}
                         />
@@ -240,7 +284,7 @@ export default class PasswordManagerAddAccount extends Component{
                                       onPress={() => {this.setFavorite(!Favorite)}}
                         >
                             <ThemedAntDesign style={{marginHorizontal: 5}} name={Favorite ? "star" : "staro"} />
-                            <ThemedText style={{...styles.labelFont}}>Favorite</ThemedText>
+                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Favorite</Text>
                         </ThemedButton>
 
 
@@ -248,15 +292,15 @@ export default class PasswordManagerAddAccount extends Component{
                     </View>
                 </ScrollView>
                 <View style={{ marginBottom: 40, display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
-                    <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={styles.buttons}>
-                        <ThemedText style={styles.buttons_font_style} theme={"reverse"}>Cancel</ThemedText>
+                    <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                        <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Cancel</Text>
                     </ThemedButton>
 
-                    <ThemedButton onPress={this.Submit} style={styles.buttons}>
-                        <ThemedText style={styles.buttons_font_style} theme={"reverse"}>Create</ThemedText>
+                    <ThemedButton onPress={this.Submit} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                        <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Create</Text>
                     </ThemedButton>
                 </View>
-            </ThemedView>
+            </View>
         )
     }
 }
@@ -270,10 +314,11 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     buttons: {
-        paddingVertical: 10,
-        width: 120,
+        paddingVertical: 15,
+        width: 140,
         display: "flex",
-        alignItems: "center"
+        alignItems: "center",
+        borderRadius: 4,
 
     },
     buttons_font_style: {
@@ -281,5 +326,10 @@ const styles = StyleSheet.create({
     },
     labelFont: {
         fontSize: 20
+    }, input: {
+        borderStyle: "solid",
+        borderBottomWidth: 1,
+        paddingHorizontal: 5,
+        paddingVertical: 10
     }
 })

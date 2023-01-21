@@ -1,13 +1,19 @@
-import {Image, StyleSheet, View} from "react-native";
+import {Image, StyleSheet, View, Text} from "react-native";
 import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import {Component, useEffect} from "react";
 import Accounts from "../service/Accounts";
+import Loading from "./Loading";
 
 
 // TODO: NOT UPDATING
+const FontHexColor = '66';
 class MenuItem extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            isReady: 0,
+        }
 
 
         this.IconName = "";
@@ -34,22 +40,37 @@ class MenuItem extends Component {
     }
 
     render() {
-        return (
-            <ThemedButton onPress={() => {this.props.navigation.navigate('Password-Manager-List',
-                {
-                    update: this.props.Update,
-                    accountService: this.props.accountService,
-                    accounts: this.accountsList,
-                    filter: this.props.filter
-                }
-            )}} style={{...styles.menuitem}}>
-                <ThemedAntDesign size={30} name={this.IconName} />
-                <View style={{margin: 15}}>
-                    <ThemedText style={{...styles.heading}}>{this.props.number}</ThemedText>
-                    <ThemedText style={{...styles.heading}}>{this.props.filter}</ThemedText>
-                </View>
-            </ThemedButton>
-        )
+        const { isReady } = this.state;
+        if (isReady) {
+            return (
+                <ThemedButton onPress={() => {
+                    this.props.navigation.navigate('Password-Manager-List',
+                        {
+                            update: this.props.Update,
+                            accountService: this.props.accountService,
+                            accounts: this.accountsList,
+                            filter: this.props.filter
+                        }
+                    )
+                }} style={{...styles.menuitem, backgroundColor: this.props.theme.secondary+FontHexColor}}>
+                    <ThemedAntDesign size={30} name={this.IconName}/>
+                    <View style={{margin: 15}}>
+                        {
+                            this.props.filter !== "Platform Filter"
+                                ? <Text
+                                    style={{...styles.heading, color: this.props.theme.text}}>{this.props.number}</Text>
+                                : ""
+                        }
+                        <Text style={{...styles.heading, color: this.props.theme.text}}>{this.props.filter}</Text>
+                    </View>
+                </ThemedButton>
+            )
+        } else {
+            if (this.props.theme) {
+                this.setState({isReady: 1})
+            }
+            return <Loading/>
+        }
     }
 }
 
@@ -59,8 +80,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "flex-start",
         alignItems: "center",
-        backgroundColor: "rgba(255,255,255,0.18)",
         marginVertical: 5,
+        marginHorizontal: 5,
+        borderRadius: 4,
         paddingHorizontal: 20
     },
     heading: {

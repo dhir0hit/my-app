@@ -1,4 +1,4 @@
-import {Pressable, View} from "react-native";
+import {Pressable, View, Text} from "react-native";
 import {ThemedAntDesign, ThemedButton, ThemedText} from "./ThemedComponents";
 import {useEffect, useState} from "react";
 
@@ -12,7 +12,7 @@ function HiddenText(props) {
     }
     return (
         <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
-            <View><ThemedText>{isHidden ? hiddenText : textOutput}</ThemedText></View>
+            <View><Text style={{color: props.color}}>{isHidden ? hiddenText : textOutput}</Text></View>
             <ThemedButton theme={"transparent"} onPress={()=>{console.log("Hide"); setHidden(!isHidden)}}><ThemedAntDesign name={isHidden ? "eyeo" : "eye"} /></ThemedButton>
         </View>
     )
