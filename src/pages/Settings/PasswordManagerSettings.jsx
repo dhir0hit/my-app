@@ -5,9 +5,9 @@ import {
 } from "../../components/ThemedComponents";
 import {Pressable, ScrollView, StyleSheet, TextInput, View, Text} from "react-native";
 import {StatusBar} from "expo-status-bar";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {LinearGradient} from "expo-linear-gradient";
-import Settings from "../../service/Settings";
+import Settings, { SetSettings } from "../../service/Settings";
 import Loading from "../../components/Loading";
 
 export default function PasswordManagerSettings(props) {
@@ -27,23 +27,46 @@ export default function PasswordManagerSettings(props) {
       }
   );
 
-  Settings()
-      .then((value) => {
-        let result = JSON.parse(value);
+  useEffect(() => {
+    Settings()
+        .then((value) => {
+          let result = JSON.parse(value);
 
-        settings['username'] = result['username'];
-        settings['pin'] = result['pin'];
-        settings['fontSize'] = result['fontSize'];
-        settings['theme'] = result['theme'];
+          settings['username'] = result['username'];
+          settings['pin'] = result['pin'];
+          settings['fontSize'] = result['fontSize'];
+          settings['theme'] = result['theme'];
 
-        setSettings(settings);
-        // console.log(result['pin'])
-        setReady(1);
-      })
-  ;
+          setSettings(settings);
+          setPin(result['pin']);
+          // setPin(result['pin']);
+          // console.log(result['pin'])
+          setReady(1);
+        })
+    ;
+  }, [settings])
 
   const [editPin, SetEditPin] = useState(false);
-  const [pin, setPin] = useState("1234");
+  const [pin, setPin] = useState('');
+
+  const changePin = (value) => {
+    SetEditPin(!editPin)
+
+    if (editPin) {
+      let temp = {
+        username: settings.username,
+        pin: pin,
+        fontSize: settings.fontSize,
+        theme: settings.theme
+      };
+      console.log(temp)
+      SetSettings(JSON.stringify(temp))
+          .then((value) => console.log(value))
+      console.log(pin)
+    }
+  }
+
+  console.log(pin)
 
 
   if (isReady) {
@@ -61,7 +84,7 @@ export default function PasswordManagerSettings(props) {
                     onPress={() => {
                       props.navigation.goBack()
                     }}
-                    style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
+                    style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10, paddingHorizontal: 15}}
                 >
                   <ThemedAntDesign name={"left"} size={24} color={settings.theme.text}/>
                 </Pressable>
@@ -81,20 +104,15 @@ export default function PasswordManagerSettings(props) {
                       editPin
                           ? <TextInput
                               style={{...styles.input, color: settings.theme.text}}
-                              value={pin}
+                              defaultValue={settings.pin}
+                              onChangeText={(value) => {setPin(()=>value)}}
                           />
                           : <ThemedText style={{...styles.input, color: settings.theme.text}}>{pin}</ThemedText>
                     }
 
                     <ThemedButton
                         theme={'transparent'}
-                        onPress={(value) => {
-                          SetEditPin(!editPin)
-
-                          if (editPin) {
-                            console.log("pin")
-                          }
-                        }}
+                        onPress={changePin}
                     >
                       <ThemedAntDesign name={editPin ? 'close' : 'edit'}/>
                     </ThemedButton>

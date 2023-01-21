@@ -91,7 +91,7 @@ export default class PasswordManagerLanding extends Component {
     }
 
     checkPin(pin) {
-        return pin.join('') === "1234";
+        return pin.join('') === this.state.settings.pin;
     }
 
     render() {

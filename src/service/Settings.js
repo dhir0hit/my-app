@@ -141,12 +141,17 @@ async function SetName(name) {
     await  AsyncStorage.getItem('Name', async (error, result) => {
       // creating new variable for storing json
       let data = JSON.parse(result);
-      // setting pin to data
-      data['username'] = name;
+      // setting NAME to data
+      let temp = {
+        username: name,
+        pin: data.pin,
+        fontSize: data.fontSize,
+        theme: data.theme
+      }
 
       await AsyncStorage.setItem(
           'settings',
-          JSON.stringify(data)
+          JSON.stringify(temp)
       )
     })
   } catch (e) {
@@ -197,5 +202,24 @@ async function SetFontSize(fontSize) {
   }
 }
 
+async function SetTheme(theme) {
+  try {
+    await AsyncStorage.getItem('settings', async (error, result) => {
+      // creating new variable for storing JSON
+      let data = JSON.parse(result);
+      // setting THEME to data
+      data['theme'] = theme;
+
+      await AsyncStorage.setItem(
+          'settings',
+          JSON.stringify(data)
+      );
+    });
+    return 1;
+  } catch (e) {
+    return 0;
+  }
+}
+
 export default Settings;
-export {SetSettings, SetName, GetName, SetPin, GetPin, SetFontSize, GetFontSize, SettingsStorageJSONFormat}
+export {SetSettings, SetName, GetName, SetPin, GetPin, SetFontSize, GetFontSize, SetTheme, SettingsStorageJSONFormat}

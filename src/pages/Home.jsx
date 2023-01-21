@@ -6,6 +6,7 @@ import Loading from "../components/Loading";
 import Settings, {SettingsStorageJSONFormat} from "../service/Settings";
 import {LinearGradient} from "expo-linear-gradient";
 import {useIsFocused} from "@react-navigation/native";
+import UserInfo from "../components/newLogin/UserInfo";
 
 function Home(props) {
   const [isReady, setReady] = useState(0);
@@ -23,6 +24,7 @@ function Home(props) {
         }
       }
   );
+  const [isFirstTimeLogin, setFirstTimeLogin] = useState(0);
 
   const isFocused = useIsFocused()
 
@@ -41,6 +43,12 @@ function Home(props) {
           setSettings(settings);
           // console.log(result['pin'])
           setReady(1);
+
+          if (!settings.username || !settings.pin) {
+            // settings first time login true
+            // so we can show prompt
+            setFirstTimeLogin(1)
+          }
         })
     ;
   }
@@ -48,7 +56,18 @@ function Home(props) {
 
   // console.log(settings['theme']);
   if (isReady) {
-    return (
+    return <>
+      {
+        isFirstTimeLogin
+            ? <UserInfo
+                settingService={settings}
+                setSettingService={(value)=>setSettings(value)}
+                setComplete={(value)=>{setFirstTimeLogin(value); console.log(value)}}
+            />
+            : <></>
+      }
+
+
         <View>
           <LinearGradient
               style={{...styles.container, paddingTop: 40}}
@@ -94,7 +113,7 @@ function Home(props) {
           </View>
           </LinearGradient>
         </View>
-    )
+    </>
   } else {
     return <Loading />;
   }
