@@ -18,7 +18,6 @@ import {LinearGradient} from "expo-linear-gradient";
 /*
 * TODO: have to go to home page to reload things
 * */
-const FontHexColor = "66";
 export default class PasswordManagerDetail extends Component {
     constructor(props) {
         super(props);
@@ -27,38 +26,38 @@ export default class PasswordManagerDetail extends Component {
             isReady: 0,
             settings: {
                 username: "",
-                pin: "",
+                pin:      "",
                 fontSize: 10,
                 theme: {
-                    text: "#fffcf2",
+                    text:       "#fffcf2",
                     background: "#252422",
-                    primary: "",
-                    secondary: "#403d39",
-                    highlight: "#d35322",
+                    primary:    "",
+                    secondary:  "#403d39",
+                    highlight:  "#d35322",
                 }
             },
-            isEditMode: false,
-            username: this.props.route.params.account.Username,
-            userPassword: this.props.route.params.account.Password,
-            userPlatform: this.props.route.params.account.Platform,
-            userWebsite: this.props.route.params.account.Website,
-            additionalInfo: this.props.route.params.account.AdditionalInfo,
+            isEditMode     : false,
+            username       : this.props.route.params.account.Username,
+            userPassword   : this.props.route.params.account.Password,
+            userPlatform   : this.props.route.params.account.Platform,
+            userWebsite    : this.props.route.params.account.Website,
+            additionalInfo : this.props.route.params.account.AdditionalInfo,
 
-            isFavorite: this.props.route.params.account.Favorite,
+            isFavorite     : this.props.route.params.account.Favorite,
             accountStrength: 0
         }
 
-        this.setUsername = this.setUsername.bind(this)
-        this.setUserPassword = this.setUserPassword.bind(this)
-        this.setUserPlatform = this.setUserPlatform.bind(this)
-        this.setUserWebsite = this.setUserWebsite.bind(this)
-        this.setAdditionalInfo = this.setAdditionalInfo.bind(this)
-        this.setFavorite = this.setFavorite.bind(this)
+        this.setUsername        = this.setUsername.bind(this);
+        this.setUserPassword    = this.setUserPassword.bind(this);
+        this.setUserPlatform    = this.setUserPlatform.bind(this);
+        this.setUserWebsite     = this.setUserWebsite.bind(this);
+        this.setAdditionalInfo  = this.setAdditionalInfo.bind(this);
+        this.setFavorite        = this.setFavorite.bind(this);
 
-        this.DeleteAccount = this.DeleteAccount.bind(this)
-        this.Submit = this.Submit.bind(this)
+        this.DeleteAccount      = this.DeleteAccount.bind(this);
+        this.Submit             = this.Submit.bind(this);
+        this.setPasswordStrength= this.setPasswordStrength.bind(this);
 
-        this.setPasswordStrength();
         Settings()
             .then((value) => {
                 let result = JSON.parse(value);
@@ -78,14 +77,19 @@ export default class PasswordManagerDetail extends Component {
         ;
     }
 
+    componentDidMount() {
+        this.setPasswordStrength();
+    }
+
     setPasswordStrength() {
         const { userPassword } = this.state;
         let _passwordStrength = new PasswordStrength(userPassword);
+        console.log()
         this.setState({
-            accountStrength:  (_passwordStrength.StrengthPercentage / 20)
+            accountStrength:  (_passwordStrength.StrengthPercentage / 25)
         })
 
-        console.log(this.state.accountStrength);
+        // console.log(_passwordStrength.StrengthPercentage / 20);
 
     }
 
@@ -98,6 +102,7 @@ export default class PasswordManagerDetail extends Component {
     }
     setUserPassword(value) {
         this.setState({userPassword: value})
+        this.setPasswordStrength()
     }
     setUserPlatform(value) {
         this.setState({userPlatform: value})
@@ -193,21 +198,22 @@ export default class PasswordManagerDetail extends Component {
                     <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
                         <ThemedButton onPress={() => {
                             this.props.navigation.goBack()
-                        }} style={{backgroundColor: settings.theme.secondary+FontHexColor, padding: 10, marginLeft: 7}}>
-                            <ThemedAntDesign name={"left"}/>
+                        }} style={{backgroundColor: settings.theme.secondary, padding: 10, marginLeft: 7}}>
+                            <ThemedAntDesign color={settings.theme.text} name={"left"}/>
                         </ThemedButton>
                         <View style={{display: "flex", flexDirection: "row"}}>
                             <ThemedButton onPress={() => {
                                 /*Edit or Not*/
                                 this.setEditMode(!isEditMode)
                                 this.Submit();
-                            }} style={{backgroundColor: settings.theme.secondary+FontHexColor, padding: 10, marginRight: 7}}>
+                            }} style={{backgroundColor: settings.theme.secondary, borderRadius:4, padding: 10, marginRight: 7}}>
                                 <ThemedAntDesign color={settings.theme.text} name={isEditMode ? "close" : "edit"}/>
                             </ThemedButton>
                             <ThemedButton onPress={this.DeleteAccount} style={{
-                                backgroundColor: settings.theme.secondary+FontHexColor,
+                                backgroundColor: settings.theme.secondary,
                                 padding: 10,
-                                marginRight: 7
+                                marginRight: 7,
+                                borderRadius:4,
                             }}>
                                 <ThemedAntDesign color={settings.theme.text} name={"delete"}/>
                             </ThemedButton>
@@ -216,12 +222,12 @@ export default class PasswordManagerDetail extends Component {
                                     .then(() => {
                                         this.Submit()
                                     });
-                            }} style={{backgroundColor: settings.theme.secondary+FontHexColor, padding: 10, marginRight: 7}}>
+                            }} style={{backgroundColor: settings.theme.secondary, borderRadius:4, padding: 10, marginRight: 7}}>
                                 <ThemedAntDesign color={isFavorite ? settings.theme.highlight : settings.theme.text} name={"star"}/>
                             </ThemedButton>
                         </View>
                     </View>
-                    <ProgressBar style={{marginVertical: 7}} progress={0} color={settings.theme.highlight}/>
+                    <ProgressBar style={{marginVertical: 7}} progress={accountStrength} color={settings.theme.highlight}/>
                     <ScrollView>
                         <View style={{
                             display: "flex",

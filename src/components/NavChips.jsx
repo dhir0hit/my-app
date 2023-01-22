@@ -4,7 +4,6 @@ import {Component} from "react";
 import Settings from "../service/Settings";
 import Loading from "./Loading";
 
-const FontHexColor = '66';
 class NavChips extends Component {
     constructor(props) {
         super(props);
@@ -35,8 +34,8 @@ class NavChips extends Component {
                     page = "Password-Manager-List"
                 }
                 this.props.navigation.navigate(page, {accountService: this.props.accountService, Update: this.update});
-            }} style={{...styles.navChip, ...this.props.style, backgroundColor: this.props.theme.secondary+FontHexColor}}>
-                <ThemedAntDesign size={34} name={this.iconName}/>
+            }} style={{...styles.navChip, ...this.props.style, backgroundColor: this.props.theme.secondary}}>
+                <ThemedAntDesign size={34} color={this.props.theme.text} name={this.iconName}/>
                 <Text style={{...styles.navChips_text, color: this.props.theme.text}}>{this.props.pageName}</Text>
             </ThemedButton>
         )

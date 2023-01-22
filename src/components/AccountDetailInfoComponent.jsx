@@ -32,7 +32,9 @@ export function AccountDetailInfoComponent(props) {
                 }
             </View>
             <View>
-                <ThemedButton onPress={copyToClipboard} theme={"transparent"} style={{padding: 5}}><ThemedAntDesign name={copyButton}/></ThemedButton>
+                <ThemedButton onPress={copyToClipboard} theme={"transparent"} style={{padding: 5}}>
+                  <ThemedAntDesign color={props.theme.text} name={copyButton}/>
+                </ThemedButton>
             </View>
         </View>
     );

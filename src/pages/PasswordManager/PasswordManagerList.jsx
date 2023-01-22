@@ -8,7 +8,6 @@ import Loading from "../../components/Loading";
 import {LinearGradient} from "expo-linear-gradient";
 import Settings from "../../service/Settings";
 
-const FontHexColor = '66';
 export default function PasswordManagerList(props) {
   const [settings, setSettings] = useState(
       {
@@ -32,12 +31,13 @@ export default function PasswordManagerList(props) {
       .then((value) => {
         let result = JSON.parse(value);
 
-        settings['username'] = result['username'];
-        settings['pin'] = result['pin'];
-        settings['fontSize'] = result['fontSize'];
-        settings['theme'] = result['theme'];
-
-        setSettings(settings);
+        let temp = {
+          username: result['username'],
+          pin: result['pin'],
+          fontSize: result['fontSize'],
+          theme: result['theme']
+        }
+        setSettings(temp);
         // console.log(result['pin'])
       })
   ;
@@ -65,9 +65,9 @@ export default function PasswordManagerList(props) {
                   onPress={() => {
                     props.navigation.goBack()
                   }}
-                  style={{backgroundColor: settings.theme.secondary+FontHexColor, padding: 10}}
+                  style={{backgroundColor: settings.theme.secondary, padding: 10}}
               >
-                <ThemedAntDesign name={"left"} size={24} color={"white"}/>
+                <ThemedAntDesign name={"left"} size={24} color={settings.theme.text}/>
               </Pressable>
             </View>
             <Text style={{color: settings.theme.text}}>{props.route.params.filter}</Text>

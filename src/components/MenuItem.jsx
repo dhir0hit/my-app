@@ -6,7 +6,6 @@ import Loading from "./Loading";
 
 
 // TODO: NOT UPDATING
-const FontHexColor = '66';
 class MenuItem extends Component {
     constructor(props) {
         super(props);
@@ -52,8 +51,8 @@ class MenuItem extends Component {
                             filter: this.props.filter
                         }
                     )
-                }} style={{...styles.menuitem, backgroundColor: this.props.theme.secondary+FontHexColor}}>
-                    <ThemedAntDesign size={30} name={this.IconName}/>
+                }} style={{...styles.menuitem, backgroundColor: this.props.theme.secondary}}>
+                    <ThemedAntDesign size={30} color={this.props.theme.text} name={this.IconName}/>
                     <View style={{margin: 15}}>
                         {
                             this.props.filter !== "Platform Filter"

@@ -80,7 +80,7 @@ function Home(props) {
 
           <View style={{flex: 1, width: '100%', paddingVertical: 20, paddingHorizontal: 10}}>
             <ThemedButton
-                style={{...styles.button, backgroundColor: settings.theme.secondary+'90'}}
+                style={{...styles.button, backgroundColor: settings.theme.secondary}}
                 onPress={() => {
                   props.navigation.navigate('Profile', {name: 'User'})
                 }}
@@ -90,7 +90,7 @@ function Home(props) {
               </ThemedText>
             </ThemedButton>
             <ThemedButton
-                style={{...styles.button, backgroundColor: settings.theme.secondary+'90'}}
+                style={{...styles.button, backgroundColor: settings.theme.secondary}}
                 onPress={() => {
                   props.navigation.navigate('Password-Manager')
                 }}
@@ -101,7 +101,7 @@ function Home(props) {
             </ThemedButton>
 
             <ThemedButton
-                style={{...styles.button, backgroundColor: settings.theme.secondary+'90'}}
+                style={{...styles.button, backgroundColor: settings.theme.secondary}}
                 onPress={() => {
                   props.navigation.navigate('Settings', {settingsService: loadSettingService})
                 }}

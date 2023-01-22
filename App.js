@@ -1,10 +1,11 @@
 /*
 * Importing inbuilt components
 * */
-import React, {Component} from "react";
+import React, { Component } from "react";
 import { StyleSheet, LogBox } from 'react-native';
-import {NavigationContainer} from "@react-navigation/native";
-import {createNativeStackNavigator} from "@react-navigation/native-stack";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 /**
  * Importing pages
  * */
@@ -20,6 +21,7 @@ import Home from "./src/pages/Home";
 * */
 import Settings from "./src/pages/Settings/Settings";
 import PasswordManagerSettings from "./src/pages/Settings/PasswordManagerSettings";
+import AccountSettings from "./src/pages/Settings/AccountSettings";
 
 /*
 * Password Manager Imports
@@ -35,6 +37,8 @@ import PasswordManagerGeneratePassword from "./src/pages/PasswordManager/Passwor
 * Disabling Warn messages
 * */
 LogBox.ignoreLogs(['Non-serializable values were found in the navigation state. Check:'])
+LogBox.ignoreLogs(['Cannot update during an existing state transition (such as within `render`). Render methods should be a pure function of props and state.'])
+// LogBox.ignoreLogs(['Can\'t call setState on a component that is not yet mounted. This is a no-op, but it might indicate a bug in your application. Instead, assign to `this.state` directly or define a `state = {};` class property with the desired state in the PasswordManagerDetail component.'])
 
 export default class App extends Component {
   constructor(props) {
@@ -99,6 +103,11 @@ export default class App extends Component {
             <Stack.Screen
                 name={"Settings-Password-Manager"}
                 component={PasswordManagerSettings}
+                options={{title: 'Settings'}}
+            />
+            <Stack.Screen
+                name={"Settings-Account-Info"}
+                component={AccountSettings}
                 options={{title: 'Settings'}}
             />
 

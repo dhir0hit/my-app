@@ -16,7 +16,7 @@ export class AccountElement extends Component {
         return (
             <ThemedButton
                 onPress={this.props.Details}
-                style={{...styles.menuItemContainer, paddingHorizontal: 20, backgroundColor: this.props.theme.secondary+'66'}}
+                style={{...styles.menuItemContainer, paddingHorizontal: 20, backgroundColor: this.props.theme.secondary}}
             >
                 <View style={{...styles.menuItem}}>
                     {/*<Image style={{margin: 15}} source={require("../media/menu.png")}/>*/}

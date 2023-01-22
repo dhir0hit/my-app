@@ -170,7 +170,7 @@ export default class PasswordManagerLanding extends Component {
                                 this.setPin("x")
                             }}>
                                 <Text style={{color: settings.theme.text}}>
-                                    <ThemedAntDesign name={'close'}/>
+                                    <ThemedAntDesign color={settings.theme.text} name={'close'}/>
                                 </Text >
                             </ThemedButton>
                             <ThemedButton theme={"transparent"} style={{padding: 25, margin: 10}} onPress={() => {
@@ -182,7 +182,7 @@ export default class PasswordManagerLanding extends Component {
                                 this.setPin("/")
                             }}>
                                 <Text style={{color: settings.theme.text}}>
-                                    <ThemedAntDesign name={'check'}/>
+                                    <ThemedAntDesign color={settings.theme.text} name={'check'}/>
                                 </Text>
                             </ThemedButton>
                         </View>

@@ -813,6 +813,8 @@ export default class Accounts {
 
     // dividing overall Strength by total accounts
     this.OverallPasswordStrength /= this.List.length;
+    console.log(this.OverallPasswordStrength)
+    // this.OverallPasswordStrength /= 20;
   }
 
   /**

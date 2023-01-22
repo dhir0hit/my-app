@@ -5,7 +5,6 @@ import GenerateString from "../../utils/GenerateString";
 import Settings from "../../service/Settings";
 import {LinearGradient} from "expo-linear-gradient";
 
-const FontHexColor = '66';
 const PasswordManagerGeneratePassword = (props) => {
     const Generator = new GenerateString();
     const [password, setPassword] = useState(Generator.Password);
@@ -85,7 +84,7 @@ const PasswordManagerGeneratePassword = (props) => {
                       justifyContent: "center",
                       paddingVertical: 10,
                       width: 200,
-                      backgroundColor: settings.theme.highlight + FontHexColor,
+                      backgroundColor: settings.theme.highlight,
                       borderRadius: 5
                     }}>
                 <ThemedAntDesign color={settings.theme.text} name={'sync'}/>

@@ -138,12 +138,12 @@ const PasswordManagerHome = (props) => {
         NormalAccounts: accountService.NormalPasswords,
 
         StrengthProgressBarColor: () => {
-          if (accountService.OverallPasswordStrength > 70) {
-            return 'green';
-          } else if (accountService.OverallPasswordStrength > 50) {
+          if (accountService.OverallPasswordStrength < 17) {
+            return 'red';
+          } else if (accountService.OverallPasswordStrength > 20) {
             return 'orange';
           } else {
-            return 'red';
+            return 'green';
           }
         }
       })
@@ -159,7 +159,7 @@ const PasswordManagerHome = (props) => {
                   colors={[settings.theme.background, settings.theme.secondary]}
               >
                 <View style={{backgroundColor: "rgba(255,255,255,0.18)", borderRadius: 10, overflow: "hidden"}}>
-                    <View style={{height: 50, width: `${AccountsInfo.OverallStrength}%`, backgroundColor: `${AccountsInfo.StrengthProgressBarColor()}`}}></View>
+                    <View style={{height: 50, width: `${AccountsInfo.OverallStrength / 20 * 100}%`, backgroundColor: `${AccountsInfo.StrengthProgressBarColor()}`}}></View>
                 </View>
                 <View style={{
                     display: "flex", flexDirection: "row", justifyContent: "space-between",

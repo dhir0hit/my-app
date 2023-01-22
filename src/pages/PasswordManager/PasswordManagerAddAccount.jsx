@@ -4,7 +4,6 @@ import Account from "../../model/Account";
 import {Component} from "react";
 import Settings from "../../service/Settings";
 
-const FadeHexColor = "66";
 export default class PasswordManagerAddAccount extends Component{
     constructor(props) {
         super(props)
@@ -230,8 +229,8 @@ export default class PasswordManagerAddAccount extends Component{
                     <View style={{padding: 5, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
                         <ThemedButton
                             onPress={()=>{this.props.navigation.goBack()}}
-                            style={{backgroundColor: settings.theme.secondary+FadeHexColor, padding: 10}}>
-                            <ThemedAntDesign name={"left"} />
+                            style={{backgroundColor: settings.theme.secondary, padding: 10}}>
+                            <ThemedAntDesign color={settings.theme.text} name={"left"} />
                         </ThemedButton>
                         <Text style={{color: settings.theme.text}}>Create New Account</Text>
                         <ThemedButton theme={"transparent"}>
@@ -299,7 +298,7 @@ export default class PasswordManagerAddAccount extends Component{
                                           theme={"transparent"}
                                           onPress={() => {this.setFavorite(!Favorite)}}
                             >
-                                <ThemedAntDesign style={{marginHorizontal: 5}} name={Favorite ? "star" : "staro"} />
+                                <ThemedAntDesign color={settings.theme.text} style={{marginHorizontal: 5}} name={Favorite ? "star" : "staro"} />
                                 <Text style={{...styles.labelFont, color: settings.theme.text}}>Favorite</Text>
                             </ThemedButton>
 
@@ -308,11 +307,11 @@ export default class PasswordManagerAddAccount extends Component{
                         </View>
                     </ScrollView>
                     <View style={{ marginBottom: 40, display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
-                        <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                        <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={{...styles.buttons, backgroundColor: settings.theme.highlight}}>
                             <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Cancel</Text>
                         </ThemedButton>
 
-                        <ThemedButton onPress={this.Submit} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                        <ThemedButton onPress={this.Submit} style={{...styles.buttons, backgroundColor: settings.theme.highlight}}>
                             <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Create</Text>
                         </ThemedButton>
                     </View>

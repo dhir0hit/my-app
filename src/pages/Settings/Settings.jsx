@@ -1,14 +1,14 @@
 // importing built in components
 import React, {useEffect, useRef, useState} from "react";
 import {StatusBar} from "expo-status-bar";
-import {Pressable, ScrollView, StyleSheet, View, Text} from "react-native";
+import {Pressable, ScrollView, StyleSheet, View, Text, TextInput} from "react-native";
 
 // Importing third party components
 import Slider from '@react-native-community/slider';
 import {LinearGradient} from "expo-linear-gradient";
 
 // Importing custom components
-import {ThemedAntDesign, ThemedButton, ThemedText, ThemedView} from "../../components/ThemedComponents";
+import {ThemedAntDesign, ThemedButton} from "../../components/ThemedComponents";
 import {default as SettingService, SetSettings, SetFontSize} from "../../service/Settings";
 import Loading from "../../components/Loading";
 
@@ -32,6 +32,7 @@ const Themes = {
 
 /*TODO: CREATE THEME CHANGER*/
 /*TODO: Make button for gradient or solid background*/
+
 export default function Settings(props) {
   const [isReady, setReady] = useState(0);
   const [settings, setSettings] = useState(
@@ -49,6 +50,14 @@ export default function Settings(props) {
       }
   );
   const [isShowTheme, setShowTheme] = useState(0)
+
+  const [newTheme, setNewTheme] = useState({
+    text: "",
+    background: "",
+    primary: "",
+    secondary: "",
+    highlight: "",
+  });
 
 
   /*
@@ -110,7 +119,7 @@ export default function Settings(props) {
                   onPress={() => {
                     props.navigation.goBack()
                   }}
-                  style={{backgroundColor: "rgba(101,101,101,0.4)", padding: 10}}
+                  style={{backgroundColor: settings.theme.secondary, padding: 10}}
               >
                 <ThemedAntDesign name={"left"} size={24} color={"white"}/>
               </Pressable>
@@ -161,7 +170,7 @@ export default function Settings(props) {
 
                     <ThemedButton
                         style={{padding: 10,
-                          backgroundColor: settings.theme.highlight+'90',
+                          backgroundColor: settings.theme.highlight,
                           fontWeight: 900,
                           borderRadius: 4,
                           display: "flex",
@@ -170,7 +179,7 @@ export default function Settings(props) {
                           alignItems: "center"}}
                     >
                       <Text style={{color: settings.theme.text, paddingLeft: 10}}>Change Font Size</Text>
-                      <ThemedAntDesign style={{color: settings.theme.text}} name={'check'}/>
+                      {/*<ThemedAntDesign style={{color: settings.theme.text}} name={'check'}/>*/}
                     </ThemedButton>
 
                   </View>
@@ -184,20 +193,20 @@ export default function Settings(props) {
                       justifyContent: "space-around"
                     }}>
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary, borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={()=> {setShowTheme(()=>"light")}}
                       >
                         <Text style={{color: settings.theme.text}}>Light</Text>
                       </ThemedButton>
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary, borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={() => {setShowTheme(()=>"dark")}}
                       >
                         <Text style={{color: settings.theme.text}}>Dark</Text>
                       </ThemedButton>
 
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary, borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={() => {setShowTheme(()=>"custom")}}
                       >
                         <Text style={{color: settings.theme.text}}>Custom</Text>
@@ -212,7 +221,175 @@ export default function Settings(props) {
                                   :
                                   isShowTheme === "light"
                                       ? <ThemesList type={'light'} ChangeTheme={ChangeTheme}/>
-                                      : <ThemesList type={'custom'} ChangeTheme={ChangeTheme}/>
+                                      : <View>
+                                        <Text style={{color: settings.theme.text}}>Create Your Own Theme</Text>
+                                        <Text style={{color: settings.theme.text, marginTop: 10}}>Text Color</Text>
+
+                                        <View style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          borderStyle: "solid",
+                                          borderBottomColor: settings.theme.text,
+                                          borderBottomWidth: 1,
+
+                                        }}>
+                                          <TextInput
+                                              style={{
+                                                flex: 1,
+                                                color: settings.theme.text,
+                                                fontSize: 15,
+                                              }}
+                                              placeholder={'#ffff or white or rgba(0, 0, 0, 100)'}
+                                              placeholderTextColor={settings.theme.text+'80'}
+                                              onChangeText={(value) => {
+                                                setNewTheme((current) => {
+                                                  return {
+                                                    text: value,
+                                                    background: current.background,
+                                                    primary: current.primary,
+                                                    secondary: current.secondary,
+                                                    highlight: current.highlight,
+                                                  }
+                                                })
+                                              }}
+                                          />
+                                          <View style={{
+                                            borderRadius: 2,
+                                            backgroundColor: newTheme.text.toLowerCase(),
+                                            height: 20,
+                                            width: 30
+                                          }}/>
+                                        </View>
+
+                                        <Text style={{color: settings.theme.text, marginTop: 10}}>Background Color</Text>
+                                        <View style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          borderStyle: "solid",
+                                          borderBottomColor: settings.theme.text,
+                                          borderBottomWidth: 1,
+
+                                        }}>
+                                          <TextInput
+                                              style={{
+                                                flex: 1,
+                                                color: settings.theme.text,
+                                                fontSize: 15,
+                                              }}
+                                              placeholder={'#ffff or white or rgba(0, 0, 0, 100)'}
+                                              placeholderTextColor={settings.theme.text+'80'}
+                                              onChangeText={(value) => {
+                                                setNewTheme((current) => {
+                                                  return {
+                                                    text: current.text,
+                                                    background: value,
+                                                    primary: current.primary,
+                                                    secondary: current.secondary,
+                                                    highlight: current.highlight,
+                                                  }
+                                                })
+                                              }}
+                                          />
+                                          <View style={{
+                                            borderRadius: 2,
+                                            backgroundColor: newTheme.background.toLowerCase(),
+                                            height: 20,
+                                            width: 30
+                                          }}/>
+                                        </View>
+
+                                        <Text style={{color: settings.theme.text, marginTop: 10}}>Secondary Color</Text>
+                                        <View style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          borderStyle: "solid",
+                                          borderBottomColor: settings.theme.text,
+                                          borderBottomWidth: 1,
+
+                                        }}>
+                                          <TextInput
+                                              style={{
+                                                flex: 1,
+                                                color: settings.theme.text,
+                                                fontSize: 15,
+                                              }}
+                                              placeholder={'#ffff or white or rgba(0, 0, 0, 100)'}
+                                              placeholderTextColor={settings.theme.text+'80'}
+                                              onChangeText={(value) => {
+                                                setNewTheme((current) => {
+                                                  return {
+                                                    text: current.text,
+                                                    background: current.background,
+                                                    primary: current.primary,
+                                                    secondary: value,
+                                                    highlight: current.highlight,
+                                                  }
+                                                })
+                                              }}
+                                          />
+                                          <View style={{
+                                            borderRadius: 2,
+                                            backgroundColor: newTheme.secondary.toLowerCase(),
+                                            height: 20,
+                                            width: 30
+                                          }}/>
+                                        </View>
+
+                                        <Text style={{color: settings.theme.text, marginTop: 10}}>Highlight Color</Text>
+                                        <View style={{
+                                          display: "flex",
+                                          flexDirection: "row",
+                                          borderStyle: "solid",
+                                          borderBottomColor: settings.theme.text,
+                                          borderBottomWidth: 1,
+
+                                        }}>
+                                          <TextInput
+                                              style={{
+                                                flex: 1,
+                                                color: settings.theme.text,
+                                                fontSize: 15,
+                                              }}
+                                              placeholder={'#ffff or white or rgba(0, 0, 0, 100)'}
+                                              placeholderTextColor={settings.theme.text+'80'}
+                                              onChangeText={(value) => {
+                                                setNewTheme((current) => {
+                                                  return {
+                                                    text: current.text,
+                                                    background: current.background,
+                                                    primary: current.primary,
+                                                    secondary: current.secondary,
+                                                    highlight: value,
+                                                  }
+                                                })
+                                              }}
+                                          />
+                                          <View style={{
+                                            borderRadius: 2,
+                                            backgroundColor: newTheme.highlight.toLowerCase(),
+                                            height: 20,
+                                            width: 30
+                                          }}/>
+                                        </View>
+
+                                        <ThemedButton
+                                            style={{
+                                              display: "flex",
+                                              flexDirection: "row",
+                                              justifyContent: "center",
+                                              paddingVertical: 10,
+                                              backgroundColor: settings.theme.highlight,
+                                              marginTop: 10,
+                                            }}
+                                            onPress={()=>{
+                                              ChangeTheme(newTheme)
+                                              // console.log(newTheme)
+                                            }}
+                                        >
+                                          <Text style={{color: settings.theme.text,}}>SAVE</Text>
+                                        </ThemedButton>
+                                      </View>
+
                             }
                           </>
                           : ""
@@ -224,13 +401,13 @@ export default function Settings(props) {
               <ThemedButton style={{
                 paddingVertical: 12,
                 paddingHorizontal: 20,
-                backgroundColor: settings.theme.secondary+'90',
+                backgroundColor: settings.theme.secondary,
                 marginTop: 5,
                 display: "flex",
                 flexDirection: "row",
                 alignItems: "center",
               }}>
-                <ThemedAntDesign name={'user'}/>
+                <ThemedAntDesign color={settings.theme.text} name={'user'}/>
                 <Text style={{...styles.heading, marginLeft: 10, color: settings.theme.text}}>Account</Text>
               </ThemedButton>
 
@@ -238,7 +415,7 @@ export default function Settings(props) {
                   style={{
                     paddingVertical: 12,
                     paddingHorizontal: 20,
-                    backgroundColor: settings.theme.secondary+'90',
+                    backgroundColor: settings.theme.secondary,
                     marginTop: 5,
                     display: "flex",
                     flexDirection: "row",
@@ -247,7 +424,7 @@ export default function Settings(props) {
                   onPress={() => {
                     props.navigation.navigate('Settings-Password-Manager')
                   }}>
-                <ThemedAntDesign name={'unlock'}/>
+                <ThemedAntDesign color={settings.theme.text} name={'unlock'}/>
                 <Text style={{...styles.heading, marginLeft: 10, color: settings.theme.text}}>Password Manager</Text>
               </ThemedButton>
 
@@ -257,23 +434,23 @@ export default function Settings(props) {
                 <View style={styles.subContainer}>
                   <ThemedButton theme={'transparent'} style={styles.navigationButton}>
                     <Text style={{color: settings.theme.text}}>About</Text>
-                    <ThemedAntDesign name={'right'}/>
+                    <ThemedAntDesign color={settings.theme.text} name={'right'}/>
                   </ThemedButton>
                   <ThemedButton theme={'transparent'} style={styles.navigationButton}>
                     <Text style={{color: settings.theme.text}}>Make Requests</Text>
-                    <ThemedAntDesign name={'right'}/>
+                    <ThemedAntDesign color={settings.theme.text} name={'right'}/>
                   </ThemedButton>
                   <ThemedButton theme={'transparent'} style={styles.navigationButton}>
                     <Text style={{color: settings.theme.text}}>Help/FAQ</Text>
-                    <ThemedAntDesign name={'right'}/>
+                    <ThemedAntDesign color={settings.theme.text} name={'right'}/>
                   </ThemedButton>
                   <ThemedButton theme={'transparent'} style={styles.navigationButton}>
                     <Text style={{color: settings.theme.text}}>Report an Issue</Text>
-                    <ThemedAntDesign name={'right'}/>
+                    <ThemedAntDesign color={settings.theme.text} name={'right'}/>
                   </ThemedButton>
                   <ThemedButton theme={'transparent'} style={styles.navigationButton}>
                     <Text style={{color: settings.theme.text}}>Contact Us</Text>
-                    <ThemedAntDesign name={'right'}/>
+                    <ThemedAntDesign color={settings.theme.text} name={'right'}/>
                   </ThemedButton>
                 </View>
               </View>
