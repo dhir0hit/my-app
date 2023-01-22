@@ -6,11 +6,12 @@ import {
     ThemedView
 }
     from "../../components/ThemedComponents";
-import {ScrollView, View, StyleSheet, Text, TextInput} from "react-native";
+import {ScrollView, View, StyleSheet, Text, TextInput, ActivityIndicator} from "react-native";
 import Account from "../../model/Account";
 import Accounts from "../../service/Accounts";
 import {Component} from "react";
 import Settings from "../../service/Settings";
+import {Spinner} from "../../components/Loading";
 
 const FadeHexColor = "66";
 export default class PasswordManagerAddAccount extends Component{
@@ -18,17 +19,17 @@ export default class PasswordManagerAddAccount extends Component{
         super(props)
 
         this.state = {
-            isReady: 0,
+            isLoading: 0,
             settings: {
                 username: "",
                 pin: "",
                 fontSize: 10,
                 theme: {
-                    text: "",
-                    background: "",
+                    text: "#fffcf2",
+                    background: "#252422",
                     primary: "",
-                    secondary: "",
-                    highlight: "",
+                    secondary: "#403d39",
+                    highlight: "#d35322",
                 }
             },
             Username: "",
@@ -68,11 +69,6 @@ export default class PasswordManagerAddAccount extends Component{
                             fontSize: result['fontSize'],
                             theme   : result['theme'],
                         }
-                    }
-                )
-                this.setState(
-                    {
-                        isReady: 1
                     }
                 )
                 // console.log(result['pin'])
@@ -164,6 +160,10 @@ export default class PasswordManagerAddAccount extends Component{
             Password !== "" &&
             Platform !== "") {
 
+            this.setState({
+                isLoading: 1
+            });
+
             let account = new Account(Username,
                 Password,
                 Platform,
@@ -175,6 +175,10 @@ export default class PasswordManagerAddAccount extends Component{
                     this.setUsernameError("");
                     this.setPasswordError("");
                     this.setPlatformError("");
+
+                    this.setState({
+                        isLoading: 0
+                    })
 
                     this.props.navigation.goBack()
                     /*
@@ -197,7 +201,8 @@ export default class PasswordManagerAddAccount extends Component{
     }
 
     render() {
-        const {isReady,
+        const {
+            isLoading,
             settings,
             Username,
             Password,
@@ -210,97 +215,118 @@ export default class PasswordManagerAddAccount extends Component{
             PlatformError} = this.state;
 
         return (
-            <View style={{flex:1, paddingTop: 50, backgroundColor: settings.theme.background}}>
-                <View style={{padding: 5, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
-                    <ThemedButton
-                        onPress={()=>{this.props.navigation.goBack()}}
-                        style={{backgroundColor: settings.theme.secondary+FadeHexColor, padding: 10}}>
-                        <ThemedAntDesign name={"left"} />
-                    </ThemedButton>
-                    <Text style={{color: settings.theme.text}}>Create New Account</Text>
-                    <ThemedButton theme={"transparent"}>
-                        <ThemedAntDesign color={settings.theme.text} name={"scan1"} />
-                    </ThemedButton>
-                </View>
+            <>
+                <View style={{flex:1, paddingTop: 50, backgroundColor: settings.theme.background}}>
+                    {
+                        isLoading
+                            ? <View style={{
+                                position: "absolute",
+                                top: 0,
+                                bottom: 0,
+                                right: 0,
+                                left: 0,
+                                display: "flex",
+                                flexDirection: "column",
+                                // alignItems: "center",
+                                justifyContent: "center"
+                            }}
+                            >
+                                <ActivityIndicator size={70} color={settings.theme.text}/>
+                            </View>
+                            : <></>
+                    }
 
-                <ScrollView>
-                    <View style={{marginHorizontal: 10}}>
-                        <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#720000"}}>{UsernameError}</Text>
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Username</Text>
+                    <View style={{padding: 5, display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+                        <ThemedButton
+                            onPress={()=>{this.props.navigation.goBack()}}
+                            style={{backgroundColor: settings.theme.secondary+FadeHexColor, padding: 10}}>
+                            <ThemedAntDesign name={"left"} />
+                        </ThemedButton>
+                        <Text style={{color: settings.theme.text}}>Create New Account</Text>
+                        <ThemedButton theme={"transparent"}>
+                            <ThemedAntDesign color={settings.theme.text} name={"scan1"} />
+                        </ThemedButton>
+                    </View>
+
+                    <ScrollView>
+                        <View style={{marginHorizontal: 10}}>
+                            <View style={{...styles.label}}>
+                                <Text style={{...styles.labelFont, color: "#720000"}}>{UsernameError}</Text>
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Username</Text>
+                            </View>
+                            <TextInput
+                                style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
+                                onChangeText={(_username) => {this.setUsername(_username)}}
+                                placeholder={"Username"}
+                                autoComplete={"username"}
+                            />
+
+                            <View style={{...styles.label}}>
+                                <Text style={{...styles.labelFont, color: "#720000"}}>{PasswordError}</Text>
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Password</Text>
+                            </View>
+                            <TextInput
+                                style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
+                                onChangeText={(_password) => {this.setPassword(_password)}}
+                                placeholder={"password"}
+                                autoComplete={"password"}
+                                secureTextEntry={true}
+                                keyboardType={"default"}
+                            />
+
+                            <View style={{...styles.label}}>
+                                <Text style={{...styles.labelFont, color: "#720000"}}>{PlatformError}</Text>
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Platform</Text>
+                            </View>
+                            <TextInput
+                                style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
+                                onChangeText={(_platform) => {this.setPlatform(_platform)}}
+                                placeholder={"ex. google, instagram"}
+                            />
+
+                            <View style={{...styles.label}}>
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Website</Text>
+                            </View>
+                            <TextInput
+                                style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
+                                onChangeText={(_website) => {this.setWebsite(_website)}}
+                                placeholder={"www.example.website.com"}
+                                keyboardType={"url"}
+                            />
+
+                            <View style={{...styles.label}}>
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Additional Info</Text>
+                            </View>
+                            <TextInput
+                                style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
+                                onChangeText={(_additional_info) => {this.setAdditionalInfo(_additional_info)}}
+                                placeholder={"info"}
+                            />
+
+
+                            <ThemedButton style={{...styles.label, display: "flex", flexDirection: "row", alignItems: "center"}}
+                                          theme={"transparent"}
+                                          onPress={() => {this.setFavorite(!Favorite)}}
+                            >
+                                <ThemedAntDesign style={{marginHorizontal: 5}} name={Favorite ? "star" : "staro"} />
+                                <Text style={{...styles.labelFont, color: settings.theme.text}}>Favorite</Text>
+                            </ThemedButton>
+
+
+
                         </View>
-                        <TextInput
-                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
-                            onChangeText={(_username) => {this.setUsername(_username)}}
-                            placeholder={"Username"}
-                            autoComplete={"username"}
-                        />
-
-                        <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#720000"}}>{PasswordError}</Text>
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Password</Text>
-                        </View>
-                        <TextInput
-                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
-                            onChangeText={(_password) => {this.setPassword(_password)}}
-                            placeholder={"password"}
-                            autoComplete={"password"}
-                            secureTextEntry={true}
-                            keyboardType={"default"}
-                        />
-
-                        <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: "#720000"}}>{PlatformError}</Text>
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Platform</Text>
-                        </View>
-                        <TextInput
-                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
-                            onChangeText={(_platform) => {this.setPlatform(_platform)}}
-                            placeholder={"ex. google, instagram"}
-                        />
-
-                        <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Website</Text>
-                        </View>
-                        <TextInput
-                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
-                            onChangeText={(_website) => {this.setWebsite(_website)}}
-                            placeholder={"www.example.website.com"}
-                            keyboardType={"url"}
-                        />
-
-                        <View style={{...styles.label}}>
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Additional Info</Text>
-                        </View>
-                        <TextInput
-                            style={{...styles.input, borderBottomColor: settings.theme.text, color: settings.theme.text}}
-                            onChangeText={(_additional_info) => {this.setAdditionalInfo(_additional_info)}}
-                            placeholder={"info"}
-                        />
-
-
-                        <ThemedButton style={{...styles.label, display: "flex", flexDirection: "row", alignItems: "center"}}
-                                      theme={"transparent"}
-                                      onPress={() => {this.setFavorite(!Favorite)}}
-                        >
-                            <ThemedAntDesign style={{marginHorizontal: 5}} name={Favorite ? "star" : "staro"} />
-                            <Text style={{...styles.labelFont, color: settings.theme.text}}>Favorite</Text>
+                    </ScrollView>
+                    <View style={{ marginBottom: 40, display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
+                        <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                            <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Cancel</Text>
                         </ThemedButton>
 
-
-
+                        <ThemedButton onPress={this.Submit} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
+                            <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Create</Text>
+                        </ThemedButton>
                     </View>
-                </ScrollView>
-                <View style={{ marginBottom: 40, display: "flex", flexDirection: "row", justifyContent: "space-evenly"}}>
-                    <ThemedButton onPress={()=>{this.props.navigation.goBack()}} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
-                        <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Cancel</Text>
-                    </ThemedButton>
-
-                    <ThemedButton onPress={this.Submit} style={{...styles.buttons, backgroundColor: settings.theme.highlight+FadeHexColor}}>
-                        <Text style={{...styles.buttons_font_style, color: settings.theme.text}} theme={"reverse"}>Create</Text>
-                    </ThemedButton>
                 </View>
-            </View>
+            </>
         )
     }
 }

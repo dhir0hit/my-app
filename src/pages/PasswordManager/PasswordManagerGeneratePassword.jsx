@@ -11,18 +11,17 @@ const PasswordManagerGeneratePassword = (props) => {
     const [password, setPassword] = useState(Generator.Password);
     const [copyButton, setCopyButton] = useState("copy1")
 
-    const [isReady, setReady] = useState(0);
     const [settings, setSettings] = useState(
         {
           username: "",
           pin: "",
           fontSize: 10,
           theme: {
-            text: "",
-            background: "",
+            text: "#fffcf2",
+            background: "#252422",
             primary: "",
-            secondary: "",
-            highlight: "",
+            secondary: "#403d39",
+            highlight: "#d35322",
           }
         }
     );
@@ -31,14 +30,22 @@ const PasswordManagerGeneratePassword = (props) => {
         .then((value) => {
           let result = JSON.parse(value);
 
-          settings['username'] = result['username'];
-          settings['pin'] = result['pin'];
-          settings['fontSize'] = result['fontSize'];
-          settings['theme'] = result['theme'];
 
-          setSettings(settings);
+          let temp = {
+            username: result['username'],
+            pin: result['pin'],
+            fontSize: result['fontSize'],
+            theme: result['theme']
+          }
+
+          //
+          // settings['username'] = result['username'];
+          // settings['pin'] = result['pin'];
+          // settings['fontSize'] = result['fontSize'];
+          // settings['theme'] = result['theme'];
+
+          setSettings(temp);
           // console.log(result['pin'])
-          setReady(1);
         })
     ;
 
@@ -55,38 +62,45 @@ const PasswordManagerGeneratePassword = (props) => {
 
 
     return (
-        <View>
-          <LinearGradient
-              style={{...styles.mainContainer, paddingTop: 40}}
-              start={{x: 0, y: 0.5}}
-              end={{x: 1, y: 1}}
-              colors={[settings.theme.background, settings.theme.secondary]}
-          >
-            <Text style={{fontSize: 15, marginBottom: 30, color: settings.theme.text}}>Generate New Password</Text>
-            <View style={{display: "flex", flexDirection: "row", marginVertical: 20}}>
-                <Text style={{fontSize: 20, width: 210, textAlign: "center", color: settings.theme.text}}>{password}</Text>
-                <ThemedButton onPress={copyToClipboard} style={{marginLeft: 10}} theme={'transparent'} >
-                    <ThemedAntDesign color={settings.theme.text} name={copyButton} />
+          <View>
+            <LinearGradient
+                style={{...styles.mainContainer, paddingTop: 40}}
+                start={{x: 0, y: 0.5}}
+                end={{x: 1, y: 1}}
+                colors={[settings.theme.background, settings.theme.secondary]}
+            >
+              <Text style={{fontSize: 15, marginBottom: 30, color: settings.theme.text}}>Generate New Password</Text>
+              <View style={{display: "flex", flexDirection: "row", marginVertical: 20}}>
+                <Text style={{
+                  fontSize: 20,
+                  width: 210,
+                  textAlign: "center",
+                  color: settings.theme.text
+                }}>{password}</Text>
+                <ThemedButton onPress={copyToClipboard} style={{marginLeft: 10}} theme={'transparent'}>
+                  <ThemedAntDesign color={settings.theme.text} name={copyButton}/>
                 </ThemedButton>
-            </View>
-            <ThemedButton
-                onPress={() => {setPassword(()=>Generator.Password)}}
-                style={
-              {
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "center",
-                paddingVertical: 10,
-                width: 200,
-                backgroundColor: settings.theme.highlight + FontHexColor,
-                borderRadius: 5
-              }}>
-                <ThemedAntDesign color={settings.theme.text} name={'sync'} />
+              </View>
+              <ThemedButton
+                  onPress={() => {
+                    setPassword(() => Generator.Password)
+                  }}
+                  style={
+                    {
+                      display: "flex",
+                      flexDirection: "row",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      paddingVertical: 10,
+                      width: 200,
+                      backgroundColor: settings.theme.highlight + FontHexColor,
+                      borderRadius: 5
+                    }}>
+                <ThemedAntDesign color={settings.theme.text} name={'sync'}/>
                 <Text style={{paddingLeft: 10, fontSize: 15, color: settings.theme.text}}>Generate</Text>
-            </ThemedButton>
-          </LinearGradient>
-        </View>
+              </ThemedButton>
+            </LinearGradient>
+          </View>
     )
 }
 /*

@@ -131,6 +131,7 @@ export default function Settings(props) {
                           fontSize: parseFloat(settings.fontSize),
                           height: 80,
                           color: settings.theme.text,
+                          borderRadius: 4,
                           backgroundColor: "rgba(255,255,255,0.1)",
                           padding: 4
                         }}
@@ -162,6 +163,7 @@ export default function Settings(props) {
                         style={{padding: 10,
                           backgroundColor: settings.theme.highlight+'90',
                           fontWeight: 900,
+                          borderRadius: 4,
                           display: "flex",
                           flexDirection: "row-reverse",
                           justifyContent: "center",
@@ -182,20 +184,20 @@ export default function Settings(props) {
                       justifyContent: "space-around"
                     }}>
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={()=> {setShowTheme(()=>"light")}}
                       >
                         <Text style={{color: settings.theme.text}}>Light</Text>
                       </ThemedButton>
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={() => {setShowTheme(()=>"dark")}}
                       >
                         <Text style={{color: settings.theme.text}}>Dark</Text>
                       </ThemedButton>
 
                       <ThemedButton
-                          style={{backgroundColor: settings.theme.secondary+'90', paddingHorizontal: 45, paddingVertical: 10}}
+                          style={{backgroundColor: settings.theme.secondary+'90', borderRadius: 4, paddingHorizontal: 45, paddingVertical: 10}}
                           onPress={() => {setShowTheme(()=>"custom")}}
                       >
                         <Text style={{color: settings.theme.text}}>Custom</Text>
@@ -226,7 +228,7 @@ export default function Settings(props) {
                 marginTop: 5,
                 display: "flex",
                 flexDirection: "row",
-                alignItems: "center"
+                alignItems: "center",
               }}>
                 <ThemedAntDesign name={'user'}/>
                 <Text style={{...styles.heading, marginLeft: 10, color: settings.theme.text}}>Account</Text>
@@ -304,6 +306,7 @@ const ThemesList = (props) => {
                 alignItems: "center",
                 paddingVertical: 15,
                 marginTop: 5,
+                borderRadius: 4,
               }}
               start={{x: 0, y: 1}}
               end={{x: 1, y: 1}}

@@ -11,18 +11,6 @@ import Logo from '../../assets/adaptive-icon.png'
 const Loading = () => {
   const [loading, setLoading] = useState('.');
   const [theme, setTheme] = useState({text: "#fff", background: "#000"});
-
-  // let loadingInterval = setInterval(() => {
-  //   setLoading((prevState) =>  {
-  //     if (prevState === '...') {
-  //       return '.'
-  //     }
-  //     return prevState + '.';
-  //   })
-  //   clearInterval(loadingInterval);
-  // }, 3000);
-
-
   Settings()
       .then((value) => {
         let result = JSON.parse(value);
@@ -47,7 +35,24 @@ const Loading = () => {
   </View>;
 }
 
+const Spinner = () => {
+  return <View style={{
+    width: "100%",
+    height: "100%",
+    position: "relative",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(0,0,0,0.1)"
+  }}>
+    <Text>Spinner</Text>
+  </View>
+}
+
+
 export default Loading;
+export {Spinner};
 
 const styles = StyleSheet.create({
   mainContainer: {
