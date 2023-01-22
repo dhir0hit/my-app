@@ -10,18 +10,17 @@ import Settings from "../../service/Settings";
 
 const FontHexColor = '66';
 export default function PasswordManagerList(props) {
-  const [isReady, setReady] = useState(0);
   const [settings, setSettings] = useState(
       {
         username: "",
         pin: "",
         fontSize: 10,
         theme: {
-          text: "",
-          background: "",
+          text: "#fffcf2",
+          background: "#252422",
           primary: "",
-          secondary: "",
-          highlight: "",
+          secondary: "#403d39",
+          highlight: "#d35322",
         }
       });
 
@@ -40,14 +39,12 @@ export default function PasswordManagerList(props) {
 
         setSettings(settings);
         // console.log(result['pin'])
-        setReady(1);
       })
   ;
 
 
   const routeName = props.route.name.split('-');
 
-  if (isReady) {
     return (
         <View style={{flex: 1}}>
           <LinearGradient
@@ -90,9 +87,6 @@ export default function PasswordManagerList(props) {
           </LinearGradient>
         </View>
     )
-  } else {
-    return <Loading />
-  }
 }
 
 function AccountList(props) {

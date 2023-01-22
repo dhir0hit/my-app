@@ -37,15 +37,7 @@ const PasswordManagerGeneratePassword = (props) => {
             fontSize: result['fontSize'],
             theme: result['theme']
           }
-
-          //
-          // settings['username'] = result['username'];
-          // settings['pin'] = result['pin'];
-          // settings['fontSize'] = result['fontSize'];
-          // settings['theme'] = result['theme'];
-
           setSettings(temp);
-          // console.log(result['pin'])
         })
     ;
 

@@ -30,11 +30,11 @@ export default class PasswordManagerDetail extends Component {
                 pin: "",
                 fontSize: 10,
                 theme: {
-                    text: "",
-                    background: "",
+                    text: "#fffcf2",
+                    background: "#252422",
                     primary: "",
-                    secondary: "",
-                    highlight: "",
+                    secondary: "#403d39",
+                    highlight: "#d35322",
                 }
             },
             isEditMode: false,
@@ -71,11 +71,6 @@ export default class PasswordManagerDetail extends Component {
                             fontSize: result['fontSize'],
                             theme   : result['theme'],
                         }
-                    }
-                )
-                this.setState(
-                    {
-                        isReady: 1
                     }
                 )
                 // console.log(result['pin'])
@@ -187,7 +182,6 @@ export default class PasswordManagerDetail extends Component {
     render() {
         const {isReady, settings, isEditMode, username, userPassword, userPlatform, userWebsite, additionalInfo, isFavorite, accountStrength} = this.state;
 
-        if (isReady) {
             return (
                 <View style={{flex: 1}}>
                     <LinearGradient
@@ -305,9 +299,6 @@ export default class PasswordManagerDetail extends Component {
                     </LinearGradient>
                 </View>
             )
-        } else {
-            return <Loading />
-        }
     }
 }
 const styles = StyleSheet.create({

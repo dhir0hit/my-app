@@ -29,19 +29,17 @@ const PasswordManagerHome = (props) => {
     NormalAccounts: 0,
     StrengthProgressBarColor: ''
   })
-
-  const [isReady, setReady] = useState(0);
   const [settings, setSettings] = useState(
       {
         username: "",
         pin: "",
         fontSize: 10,
         theme: {
-          text: "",
-          background: "",
+          text: "#fffcf2",
+          background: "#252422",
           primary: "",
-          secondary: "",
-          highlight: "",
+          secondary: "#403d39",
+          highlight: "#d35322",
         }
       }
   );
@@ -57,7 +55,7 @@ const PasswordManagerHome = (props) => {
 
         setSettings(settings);
         // console.log(result['pin'])
-        setReady(1);
+        // setReady(1);
       })
   ;
 
@@ -151,7 +149,7 @@ const PasswordManagerHome = (props) => {
       })
     }
 
-    if (appIsReady && isReady) {
+    if (appIsReady) {
         return (
             <View style={{...styles.mainContainer, height: 50, backgroundColor: settings.theme.background}}>
               <LinearGradient

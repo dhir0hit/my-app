@@ -18,11 +18,11 @@ export default class PasswordManagerLanding extends Component {
                 pin: "",
                 fontSize: 10,
                 theme: {
-                    text: "",
-                    background: "",
+                    text: "#fffcf2",
+                    background: "#252422",
                     primary: "",
-                    secondary: "",
-                    highlight: "",
+                    secondary: "#403d39",
+                    highlight: "#d35322",
                 }
             },
         }
@@ -42,12 +42,6 @@ export default class PasswordManagerLanding extends Component {
                         }
                     }
                 )
-                this.setState(
-                    {
-                        isReady: 1
-                    }
-                )
-                // console.log(result['pin'])
             })
         ;
     }
@@ -95,9 +89,8 @@ export default class PasswordManagerLanding extends Component {
     }
 
     render() {
-        const { pinList, isReady, settings } = this.state;
+        const { pinList, settings } = this.state;
 
-        if (isReady) {
             return (
                 <LinearGradient
                     style={{flex: 1}}
@@ -197,9 +190,6 @@ export default class PasswordManagerLanding extends Component {
                 </View>
                 </LinearGradient>
             )
-        } else {
-            return <Loading />
-        }
     }
 }
 

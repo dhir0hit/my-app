@@ -1,17 +1,8 @@
-import {
-    ThemedAntDesign,
-    ThemedButton,
-    ThemedText,
-    ThemedTextInput,
-    ThemedView
-}
-    from "../../components/ThemedComponents";
+import {ThemedAntDesign, ThemedButton,} from "../../components/ThemedComponents";
 import {ScrollView, View, StyleSheet, Text, TextInput, ActivityIndicator} from "react-native";
 import Account from "../../model/Account";
-import Accounts from "../../service/Accounts";
 import {Component} from "react";
 import Settings from "../../service/Settings";
-import {Spinner} from "../../components/Loading";
 
 const FadeHexColor = "66";
 export default class PasswordManagerAddAccount extends Component{
