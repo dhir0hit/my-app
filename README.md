@@ -2,7 +2,7 @@
 
 Created with EXPO GO
 needs expo account
-# default pin 1234
+<h2>This app is still in beta phase</h2>
 
 <div style='display: flex; flex-direction: row; flex-wrap: wrap;'>
 <img style='height: 500px' src="https://user-images.githubusercontent.com/91639870/213841353-38d5b397-e8f7-4115-aeb6-bd39497ff228.png"/>
